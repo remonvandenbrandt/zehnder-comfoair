@@ -2,7 +2,7 @@
 sensor:
 - platform: modbus_controller
   modbus_controller_id: modbus_device
-  name: "Supply air duty"
+  name: "Supply fan duty cycle"
   register_type: holding
   address: 0x137
   unit_of_measurement: "%"
@@ -13,7 +13,7 @@ sensor:
     - multiply: 0.1
 - platform: modbus_controller
   modbus_controller_id: modbus_device
-  name: "Exhaust air duty"
+  name: "Exhaust fan duty cycle"
   register_type: holding
   address: 0x136
   unit_of_measurement: "%"
@@ -25,7 +25,7 @@ sensor:
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device
-  name: "Supply air flow"
+  name: "Supply fan air flow"
   register_type: holding
   address: 0x139
   unit_of_measurement: "m³/h"
@@ -34,7 +34,7 @@ sensor:
   id: zehnder_supply_flow
 - platform: modbus_controller
   modbus_controller_id: modbus_device
-  name: "Exhaust air flow"
+  name: "Exhaust fan air flow"
   register_type: holding
   address: 0x138
   unit_of_measurement: "m³/h"
@@ -44,7 +44,7 @@ sensor:
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device
-  name: "Supply air fan speed"
+  name: "Supply fan air speed"
   register_type: holding
   address: 0x13B
   unit_of_measurement: "RPM"
@@ -52,7 +52,7 @@ sensor:
   id: zehnder_supply_rpm
 - platform: modbus_controller
   modbus_controller_id: modbus_device
-  name: "Exhaust air fan speed"
+  name: "Exhaust fan air speed"
   register_type: holding
   address: 0x13A
   unit_of_measurement: "RPM"
@@ -66,7 +66,6 @@ sensor:
   address: 0x14A
   unit_of_measurement: "%"
   value_type: U_WORD
-
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device

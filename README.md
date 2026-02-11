@@ -4,7 +4,7 @@ ESPHome component for communication with the Zehnder ComfoAir E300/E400 heat rec
 
 
 ### Setup 
-The unit uses RS485 serial communication at 19200:8:EVEN:1. Connetion using a twisted pair wired to the C3 port on the Zehnder unit.
+The unit uses RS485 serial communication at 19200:8:EVEN:1. Connect using a twisted pair wired to the C3 port on the Zehnder unit.
 
 ### Example of minimal configuration yaml
 ```yaml
@@ -48,14 +48,15 @@ holding registers
 
 | Adress | Name                                | Datatype | Unit | Note                     |
 |--------|-------------------------------------|----------|------|--------------------------|
-| 0x136  | Exhaust motor duty cycle            | U_WORD   | %    | % x 10                   |
-| 0x137  | Supply motor duty cycle             | U_WORD   | %    | % x 10                   |
-| 0x138  | Exhaust air flow                    | U_WORD   | m³/h |                          |
-| 0x139  | Supply air flow                     | U_WORD   | m³/h |                          |
-| 0x13A  | Exhaust air fan speed               | U_WORD   | RPM  |                          |
-| 0x13B  | Supply air fan speed                | U_WORD   | RPM  |                          |
+| 0x136  | Exhaust fan duty cycle              | U_WORD   | %    | % x 10                   |
+| 0x137  | Supply fan duty cycle               | U_WORD   | %    | % x 10                   |
+| 0x138  | Exhaust fan air flow                | U_WORD   | m³/h |                          |
+| 0x139  | Supply fan air flow                 | U_WORD   | m³/h |                          |
+| 0x13A  | Exhaust fan air speed               | U_WORD   | RPM  |                          |
+| 0x13B  | Supply fan air speed                | U_WORD   | RPM  |                          |
 | 0x14A  | External ventilation level setpoint | U_WORD   | -    | 0:low;50:medium;100:high |
 | 0x12C  | Outside air temperature             | U_WORD   | °C   | °C x 10                  |
 | 0x12D  | Pre-heater temperature              | U_WORD   | °C   | °C x 10                  |
+| 0x12F  | Supply air temperature              | U_WORD   | °C   | °C x 10                  |
 | 0x130  | Extract air temperature             | U_WORD   | °C   | °C x 10                  |
 | 0x131  | Exhaust air temperature             | U_WORD   | °C   | °C x 10                  |
