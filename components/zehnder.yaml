@@ -1,3 +1,23 @@
+uart:
+  id: uart_modbus
+  tx_pin: ${tx_pin}
+  rx_pin: ${rx_pin}
+  baud_rate: 19200
+  data_bits: 8
+  parity: EVEN
+  stop_bits: 1
+
+modbus:
+  uart_id: uart_modbus
+  id: modbus1
+#  flow_control_pin: GPIOXX # used for the MAX485 chip without automatic flow control
+
+modbus_controller:
+- id: modbus_device
+  address: 0x1
+  modbus_id: modbus1
+  setup_priority: -10
+  update_interval: ${update_interval}
 
 sensor:
 - platform: modbus_controller
@@ -66,7 +86,7 @@ sensor:
   address: 0x12C
   unit_of_measurement: "°C"
   device_class: "temperature"
-  value_type: U_WORD
+  value_type: S_WORD
   id: zehnder_t1
   accuracy_decimals: 1
   filters:
@@ -78,7 +98,7 @@ sensor:
   address: 0x12D
   unit_of_measurement: "°C"
   device_class: "temperature"
-  value_type: U_WORD
+  value_type: S_WORD
   id: zehnder_t2
   accuracy_decimals: 1
   filters:
@@ -90,7 +110,7 @@ sensor:
   address: 0x12F
   unit_of_measurement: "°C"
   device_class: "temperature"
-  value_type: U_WORD
+  value_type: S_WORD
   id: zehnder_t4
   accuracy_decimals: 1
   filters:
@@ -102,7 +122,7 @@ sensor:
   address: 0x130
   unit_of_measurement: "°C"
   device_class: "temperature"
-  value_type: U_WORD
+  value_type: S_WORD
   id: zehnder_t5
   accuracy_decimals: 1
   filters:
@@ -114,7 +134,7 @@ sensor:
   address: 0x131
   unit_of_measurement: "°C"
   device_class: "temperature"
-  value_type: U_WORD
+  value_type: S_WORD
   id: zehnder_t6
   accuracy_decimals: 1
   filters:
