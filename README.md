@@ -44,8 +44,8 @@ holding registers
 | 0x12F  | Supply air temperature              | S_WORD   | °C*10 |                          |
 | 0x130  | Extract air temperature             | S_WORD   | °C*10 |                          |
 | 0x131  | Exhaust air temperature             | S_WORD   | °C*10 |                          |
-| 0x140  | Exhaust fan flow rate setpoint      | U_WORD   | m³/h  |                          | 
-| 0x141  | Supply fan flow rate setpoint       | U_WORD   | m³/h  |                          |
+| 0x141  | Exhaust fan flow rate setpoint      | U_WORD   | m³/h  |                          | 
+| 0x140  | Supply fan flow rate setpoint       | U_WORD   | m³/h  |                          |
 | 0x148  | 0-10 V control setpoint             | U_WORD   | %     | 0:low;50:medium;100:high |
 | 0x149  | RF control setpoint                 | U_WORD   | %     | 0:low;50:medium;100:high |
 | 0x14A  | 3-way switch control setpoint       | U_WORD   | %     | 0:low;50:medium;100:high |

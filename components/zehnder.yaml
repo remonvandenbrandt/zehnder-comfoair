@@ -200,7 +200,7 @@ sensor:
   name: "Exhaust fan flow rate setpoint"
   id: zehnder_exhaust_flow_setpoint
   register_type: holding
-  address: 0x140
+  address: 0x141
   state_class: "measurement"
   value_type: U_WORD
   unit_of_measurement: "m³/h"
@@ -210,7 +210,7 @@ sensor:
   name: "Supply fan flow rate setpoint"
   id: zehnder_supply_flow_setpoint
   register_type: holding
-  address: 0x141
+  address: 0x140
   state_class: "measurement"
   value_type: U_WORD
   unit_of_measurement: "m³/h"
