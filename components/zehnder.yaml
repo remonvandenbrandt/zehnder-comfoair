@@ -273,8 +273,8 @@ sensor:
   internal: true
   modbus_controller_id: modbus_device
   entity_category: "diagnostic"
-  name: "Software Version (raw)"
-  id: zehnder_software_version_raw
+  name: "Firmware version (raw)"
+  id: zehnder_firmware_version_raw
   address: 0x6E
   register_type: holding
   skip_updates: 100
@@ -282,9 +282,9 @@ sensor:
   on_value: 
     then:
       - text_sensor.template.publish:
-          id: zehnder_software_version
+          id: zehnder_firmware_version
           state: !lambda |-
-            int value = id(zehnder_software_version_raw).state;
+            int value = id(zehnder_firmware_version_raw).state;
             int major = value / 10000;      // Extract the major version
             int minor = (value / 100) % 100; // Extract the minor version
             int patch = value % 100;         // Extract the patch version
@@ -292,8 +292,8 @@ sensor:
 
 text_sensor:
   - platform: template
-    name: "zehnder_software_version"
-    id: zehnder_software_version
+    name: "Firmware version"
+    id: zehnder_firmware_version
     update_interval: never
     entity_category: "diagnostic"
   
