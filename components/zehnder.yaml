@@ -207,15 +207,6 @@ sensor:
 # --- control setpoint ---
 - platform: modbus_controller
   modbus_controller_id: modbus_device
-  name: "3-way switch control setpoint"
-  id: zehnder_three_way_control_setpoint
-  register_type: holding
-  address: 0x14A
-  unit_of_measurement: "%"
-  value_type: U_WORD
-  state_class: "measurement"
-- platform: modbus_controller
-  modbus_controller_id: modbus_device
   name: "0-10 V control setpoint"
   id: zehnder_zero_ten_V_control_setpoint
   register_type: holding
@@ -229,6 +220,24 @@ sensor:
   id: zehnder_rf_control_setpoint
   register_type: holding
   address: 0x149
+  unit_of_measurement: "%"
+  value_type: U_WORD
+  state_class: "measurement"
+- platform: modbus_controller
+  modbus_controller_id: modbus_device
+  name: "3-way switch control setpoint"
+  id: zehnder_three_way_control_setpoint
+  register_type: holding
+  address: 0x14A
+  unit_of_measurement: "%"
+  value_type: U_WORD
+  state_class: "measurement"
+- platform: modbus_controller
+  modbus_controller_id: modbus_device
+  name: "Bathroom switch control setpoint"
+  id: zehnder_bathroom_control_setpoint
+  register_type: holding
+  address: 0x14B
   unit_of_measurement: "%"
   value_type: U_WORD
   state_class: "measurement"

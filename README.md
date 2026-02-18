@@ -53,6 +53,7 @@ holding registers
 | 0x148  | 0-10 V control setpoint             | U_WORD   | %     | 0:low;50:medium;100:high |
 | 0x149  | RF control setpoint                 | U_WORD   | %     | 0:low;50:medium;100:high |
 | 0x14A  | 3-way switch control setpoint       | U_WORD   | %     | 0:low;50:medium;100:high |
+| 0x14B  | Bathroom switch control setpoint    | U_WORD   | %     | 0:low;50:medium;100:high |
 | 0x13C  | 0-10 V input voltage                | U_word   | V*100 | steering signal (0-10V)  |
 | 0x13D  | RF input voltage                    | U_WORD   | V*100 | steering signal (0-10V)  |
 | 0x13E  | RF input enabled                    | U_WORD   | -     | 0:off;1:on               |
