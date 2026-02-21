@@ -10,7 +10,6 @@ uart:
 modbus:
   uart_id: uart_modbus
   id: modbus1
-#  flow_control_pin: GPIOXX # used for the MAX485 chip without automatic flow control
 
 modbus_controller:
 - id: modbus_device
