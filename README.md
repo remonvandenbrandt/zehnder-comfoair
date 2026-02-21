@@ -35,8 +35,8 @@ In order to connect the MAX485 module to the nodeMCU the following mapping can b
 |---------|--------|---------------------------|
 | GPI01   | TDX    | DI (Driver Input)         |
 | GPI03   | RDX    | RO (Receiver Output)      |
-| GPIO2   | -      | RE (Receiver Enable)      |
-| GPIO2   | -      | DE (Driver Enable)        |
+| GPIO5   | -      | RE (Receiver Enable)      |
+| GPIO5   | -      | DE (Driver Enable)        |
 
 Next, connect the VCC and GND pins. Finally, the A+ and B- ports of the MAX485 module should be connected to the A+ and B- ports on the C3 connector using a twisted pair. 
 
@@ -46,6 +46,10 @@ substitutions:
   tx_pin: GPIO01
   rx_pin: GPIO03
   update_interval: 15s
+
+# uncomment for  MAX485 chip without automatic flow control
+# modbus:
+#   flow_control_pin: GPIO05
 
 packages:
   remote_package:
