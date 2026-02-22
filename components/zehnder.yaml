@@ -332,13 +332,31 @@ binary_sensor:
   device_class: heat
 - platform: modbus_controller
   modbus_controller_id: modbus_device
-  name: "Pre-heater present"
+  internal: true
   address: 0x152
   register_type: holding
+  id: zehnder_pre_heater_present_internal
+- platform: template
+  name: "Pre-heater present"
   id: zehnder_pre_heater_present
+  lambda: |-
+    if (id(zehnder_firmware_version_raw).state > 19999) { // only available on firmware 2.0.0+
+      return id(zehnder_pre_heater_present_internal).state;
+    } else {
+      return {};
+    }
 - platform: modbus_controller
   modbus_controller_id: modbus_device
-  name: "Fireplace mode"
+  internal: true
   address: 0x151
   register_type: holding
+  id: zehnder_fireplace_mode_internal
+- platform: template
+  name: Fireplace mode
   id: zehnder_fireplace_mode
+  lambda: |-
+    if (id(zehnder_firmware_version_raw).state > 19999) { // only available on firmware 2.0.0+
+      return id(zehnder_fireplace_mode_internal).state;
+    } else {
+      return {};
+    }
