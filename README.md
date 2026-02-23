@@ -47,8 +47,7 @@ substitutions:
   rx_pin: GPIO03
   update_interval: 15s
 
-# uncomment for  MAX485 chip without automatic flow control
-# modbus:
+# modbus: # uncomment for MAX485 chip without automatic flow control
 #   flow_control_pin: GPIO05
 
 packages:
@@ -84,6 +83,9 @@ The following data fields have been identified from the holding registers. Curre
 | 0x135   | Exhaust humidity                    | U_WORD   | %    | 10    |                          |
 | 0x141   | Exhaust fan flow rate setpoint      | U_WORD   | m³/h | 1     |                          | 
 | 0x140   | Supply fan flow rate setpoint       | U_WORD   | m³/h | 1     |                          |
+| 0x145   | Bypass motor active                 | U_WORD   | -    | 1     | 0:off;1:on;2:both on     |
+| 0x146   | Bypass setpoint                     | U_WORD   | %    | 1     | 0:closed;100:fully open  |
+| 0x147   | Bypass position                     | U_WORD   | %    | 1     | 0:closed;100:fully open  |
 | 0x148   | Analog (0-10 V) control setpoint    | U_WORD   | %    | 1     | 0:low;50:medium;100:high |
 | 0x149   | RF control setpoint                 | U_WORD   | %    | 1     | 0:low;50:medium;100:high |
 | 0x14A   | 3-way switch control setpoint       | U_WORD   | %    | 1     | 0:low;50:medium;100:high |
