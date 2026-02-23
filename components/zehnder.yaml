@@ -365,7 +365,7 @@ binary_sensor:
   name: "Bypass"
   id: zehnder_bypass
   device_class: opening
-  lambda: -|
+  lambda: |-
     if (id(zehnder_bypass_position).state > 0) {
       return true;
     } else {
