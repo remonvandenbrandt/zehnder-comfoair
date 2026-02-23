@@ -83,7 +83,7 @@ The following data fields have been identified from the holding registers. Curre
 | 0x135   | Exhaust humidity                    | U_WORD   | %    | 10    |                          |
 | 0x141   | Exhaust fan flow rate setpoint      | U_WORD   | m³/h | 1     |                          | 
 | 0x140   | Supply fan flow rate setpoint       | U_WORD   | m³/h | 1     |                          |
-| 0x145   | Bypass motor active                 | U_WORD   | -    | 1     | 0:off;1:on;2:both on     |
+| 0x145   | Bypass motor active                 | U_WORD   | -    | 1     | 0:off;1:one on;2:both on |
 | 0x146   | Bypass setpoint                     | U_WORD   | %    | 1     | 0:closed;100:fully open  |
 | 0x147   | Bypass position                     | U_WORD   | %    | 1     | 0:closed;100:fully open  |
 | 0x148   | Analog (0-10 V) control setpoint    | U_WORD   | %    | 1     | 0:low;50:medium;100:high |
