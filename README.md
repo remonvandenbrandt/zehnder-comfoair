@@ -21,13 +21,17 @@ The pin-out is shown in the image below:
 | C4        | Malfunction indicator (5V when malfunction is detected) |
 
 ### Hardware
-The example hardware is based on a nodeMCU V2 and a MAX485 module that converts the RS485 signal to UART. Two different types of module are available, with and without automatic flow control.
+The example hardware is based on a nodeMCU V2 and a MAX485 module that converts the RS485 signal to UART. 
+
+Since the RS485 connection is half-duplex, it cannot send and receive data at the same time, unlike UART. To overcome this issue, the module uses flow control to determine if it should be sending or receiving data. Two different types of module are available, with and without automatic flow control.
 
 | Without automatic flow control                    | With automatic flow control                    |
 | --------------------------------------------------|------------------------------------------------|
 | <img src="docs/max485_no_flow.jpg" width="320" /> | <img src="docs/max485_flow.jpg" width="290" /> |
 
 Note that the pin-out is different. The module with automatic flow control has input pins labeled TDX and RDX while the module without automatic flow control has pins labeled DI, RO, RE and DE.
+
+Both modules can be used in this project, the only difference being the availability of the module, and the requirement for an additional free pin.
 
 In order to connect the MAX485 module to the nodeMCU the following mapping can be used. 
 
