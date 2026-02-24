@@ -271,6 +271,7 @@ sensor:
   value_type: U_WORD
   state_class: "measurement"
 
+# --- input voltage ---
 - platform: modbus_controller
   modbus_controller_id: modbus_device
   name: "Analog (0-10V) input voltage"
@@ -281,6 +282,7 @@ sensor:
   value_type: U_WORD
   accuracy_decimals: 1
   state_class: "measurement"
+  disabled_by_default: true
   device_class: 'voltage'
   filters:
     - multiply: 0.01
@@ -294,6 +296,7 @@ sensor:
   value_type: U_WORD
   accuracy_decimals: 1
   state_class: "measurement"
+  disabled_by_default: true
   device_class: 'voltage'
   filters:
     - multiply: 0.01
@@ -305,6 +308,7 @@ sensor:
   register_type: holding
   address: 0x141
   state_class: "measurement"
+  disabled_by_default: true
   value_type: U_WORD
   unit_of_measurement: "m³/h"
   device_class: "volume_flow_rate"
@@ -315,6 +319,7 @@ sensor:
   register_type: holding
   address: 0x140
   state_class: "measurement"
+  disabled_by_default: true
   value_type: U_WORD
   unit_of_measurement: "m³/h"
   device_class: "volume_flow_rate"
@@ -353,6 +358,7 @@ binary_sensor:
   name: "RF input enabled"
   address: 0x13E
   register_type: holding
+  entity_category: "diagnostic"
   id: zehnder_rf_input_enabled
 - platform: modbus_controller
   modbus_controller_id: modbus_device
@@ -379,6 +385,7 @@ binary_sensor:
   id: zehnder_pre_heater_present_internal
 - platform: template
   name: "Pre-heater present"
+  entity_category: "diagnostic"
   id: zehnder_pre_heater_present
   lambda: |-
     if (id(zehnder_firmware_version_raw).state > 19999) { // only available on firmware 2.0.0+
