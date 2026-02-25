@@ -70,8 +70,9 @@ The following data fields have been identified from the holding registers. Curre
 
 | Address | Name                                | Datatype | Unit | Scale | Note                                                 |
 |-------- |-------------------------------------|----------|------|-------|------------------------------------------------------|
-| 0x065   | Device Status                       | U_WORD   | -    | -     | 0:fault; 2:self-test; 10:normal; 42:Maintenance Mode |
+| 0x065   | Device Status                       | U_WORD   | -    | -     | 0:Fault; 2:Self-test; 10:Normal; 42:Maintenance Mode |
 | 0x06E   | Firmware version                    | U_WORD   | -    | -     | 20800 = 2.8.0                                        |
+| 0x06F   | Orientation                         | U_WORD   | -    | -     | 0:right; 1:left                                      |
 | 0x136   | Exhaust fan duty cycle              | U_WORD   | %    | 10    |                                                      |
 | 0x137   | Supply fan duty cycle               | U_WORD   | %    | 10    |                                                      |
 | 0x138   | Exhaust fan flow rate               | U_WORD   | m³/h | 1     |                                                      |
