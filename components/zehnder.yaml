@@ -301,6 +301,7 @@ sensor:
   filters:
     - multiply: 0.01
 
+# --- flow rate setpoint ---
 - platform: modbus_controller
   modbus_controller_id: modbus_device
   name: "Exhaust fan flow rate setpoint"
@@ -351,6 +352,24 @@ text_sensor:
     id: zehnder_firmware_version
     update_interval: never
     entity_category: "diagnostic"
+    
+  - platform: modbus_controller
+    name: "Status"
+    id: zehnder_status
+    entity_category: "diagnostic"
+    address: 0x65
+    register_type: holding
+    raw_encode: HEXBYTES
+    lambda: |-
+        uint16_t value = modbus_controller::word_from_hex_str(x, 0);
+        switch (value) {
+          case 0: return std::string("Fault");
+          case 2: return std::string("Self-test");
+          case 10: return std::string("Normal");
+          case 42: return std::string("Maintenance Mode");
+          default: return std::string("Unknown");
+        }
+        return x;
   
 binary_sensor:
 - platform: modbus_controller
