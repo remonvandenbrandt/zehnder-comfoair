@@ -72,8 +72,8 @@ The following data fields have been identified from the holding registers. Curre
 |-------- |-----------------------------------|----------|------|-------|----------------------------------------------------------|
 | 0x065   | Device Status                     | U_WORD   | -    | -     | 0: Fault; 2: Self Test; 10: Normal; 42: Maintenance Mode |
 | 0x06E   | Firmware version                  | U_WORD   | -    | -     | 20800 = 2.8.0                                            |
-| 0x06F   | Orientation                       | U_WORD   | -    | -     | 0:right; 1:left                                          |
-| 0x070   | Model                             | U_WORD   | -    | -     | 0: E300 P; 2: E300 RF; 4: E400 RF                        |
+| 0x06F   | Orientation                       | U_WORD   | -    | -     | 0:Right; 1:Left                                          |
+| 0x070   | Model                             | U_WORD   | -    | -     | 0:E300 P; 2:E300 RF; 4:E400 RF                           |
 | 0x136   | Exhaust fan duty cycle            | U_WORD   | %    | 10    |                                                          |
 | 0x137   | Supply fan duty cycle             | U_WORD   | %    | 10    |                                                          |
 | 0x138   | Exhaust fan flow rate             | U_WORD   | m³/h | 1     |                                                          |
@@ -91,18 +91,18 @@ The following data fields have been identified from the holding registers. Curre
 | 0x135   | Exhaust humidity                  | U_WORD   | %    | 10    |                                                          |
 | 0x141   | Exhaust fan flow rate setpoint    | U_WORD   | m³/h | 1     |                                                          | 
 | 0x140   | Supply fan flow rate setpoint     | U_WORD   | m³/h | 1     |                                                          |
-| 0x145   | Bypass motor active               | U_WORD   | -    | 1     | 0:off; 1:one on; 2:both on                               |
-| 0x146   | Bypass setpoint                   | U_WORD   | %    | 1     | 0:closed; 100:fully open                                 |
-| 0x147   | Bypass position                   | U_WORD   | %    | 1     | 0:closed; 100:fully open                                 |
-| 0x148   | Analog (0-10 V) control setpoint  | U_WORD   | %    | 1     | 0:low; 50:medium; 100:high                               |
-| 0x149   | RF control setpoint               | U_WORD   | %    | 1     | 0:low; 50:medium; 100:high                               |
-| 0x14A   | 3-way switch control setpoint     | U_WORD   | %    | 1     | 0:low; 50:medium; 100:high                               |
-| 0x14B   | Bathroom switch control setpoint  | U_WORD   | %    | 1     | 0:low; 50:medium; 100:high                               |
-| 0x13C   | Analog (0-10 V) input voltage     | U_WORD   | V    | 100   | steering signal (0-10V)                                  |
-| 0x13D   | RF input voltage                  | U_WORD   | V    | 100   | steering signal (0-10V)                                  |
-| 0x13E   | RF input enabled                  | U_WORD   | -    | -     | 0:off; 1:on                                              |
-| 0x13F   | Pre-heater active                 | U_WORD   | -    | -     | 0:off; 1:on                                              |
-| 0x152   | Pre-heater present*               | U_WORD   | -    | -     | 0:absent; 1:present                                      |
-| 0x151   | Fireplace mode*                   | U_WORD   | -    | -     | 0:off; 1:on                                              |
+| 0x145   | Bypass motor active               | U_WORD   | -    | 1     | 0:Off; 1:One on; 2:Both on                               |
+| 0x146   | Bypass setpoint                   | U_WORD   | %    | 1     | 0:Closed; 100:Fully open                                 |
+| 0x147   | Bypass position                   | U_WORD   | %    | 1     | 0:Closed; 100:Fully open                                 |
+| 0x148   | Analog (0-10 V) control setpoint  | U_WORD   | %    | 1     | 0:Low; 50:Medium; 100:High                               |
+| 0x149   | RF control setpoint               | U_WORD   | %    | 1     | 0:Low; 50:Medium; 100:High                               |
+| 0x14A   | 3-way switch control setpoint     | U_WORD   | %    | 1     | 0:Low; 50:Medium; 100:High                               |
+| 0x14B   | Bathroom switch control setpoint  | U_WORD   | %    | 1     | 0:Low; 50:Medium; 100:High                               |
+| 0x13C   | Analog (0-10 V) input voltage     | U_WORD   | V    | 100   | Steering signal (0-10V)                                  |
+| 0x13D   | RF input voltage                  | U_WORD   | V    | 100   | Steering signal (0-10V)                                  |
+| 0x13E   | RF input enabled                  | U_WORD   | -    | -     | 0:Off; 1:On                                              |
+| 0x13F   | Pre-heater active                 | U_WORD   | -    | -     | 0:Off; 1:On                                              |
+| 0x152   | Pre-heater present*               | U_WORD   | -    | -     | 0:Absent; 1:Present                                      |
+| 0x151   | Fireplace mode*                   | U_WORD   | -    | -     | 0:Off; 1:On                                              |
 
 *Only available on later firmware versions (confirmed on 2.8.0)
