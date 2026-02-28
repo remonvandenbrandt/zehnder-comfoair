@@ -19,6 +19,17 @@ modbus_controller:
   update_interval: ${update_interval}
 
 sensor:
+# -- ventilation level ---
+- platform: combination
+  name: "Ventilation Level"
+  id: 'zehnder_ventilation_level'
+  type: max
+  sources:
+    - source: zehnder_analog_control_setpoint
+    - source: zehnder_rf_control_setpoint
+    - source: zehnder_three_way_control_setpoint
+    - source: zehnder_bathroom_control_setpoint
+
 # --- fan states ---
 - platform: modbus_controller
   modbus_controller_id: modbus_device
@@ -233,7 +244,7 @@ sensor:
   state_class: "measurement"
   disabled_by_default: true
   
-# --- control setpoint ---
+# --- control setpoints ---
 - platform: modbus_controller
   modbus_controller_id: modbus_device
   name: "Analog (0-10V) control setpoint"
@@ -243,6 +254,7 @@ sensor:
   unit_of_measurement: "%"
   value_type: U_WORD
   state_class: "measurement"
+  disabled_by_default: true
 - platform: modbus_controller
   modbus_controller_id: modbus_device
   name: "RF control setpoint"
@@ -252,6 +264,7 @@ sensor:
   unit_of_measurement: "%"
   value_type: U_WORD
   state_class: "measurement"
+  disabled_by_default: true
 - platform: modbus_controller
   modbus_controller_id: modbus_device
   name: "3-way switch control setpoint"
@@ -261,6 +274,7 @@ sensor:
   unit_of_measurement: "%"
   value_type: U_WORD
   state_class: "measurement"
+  disabled_by_default: true
 - platform: modbus_controller
   modbus_controller_id: modbus_device
   name: "Bathroom switch control setpoint"
@@ -270,6 +284,7 @@ sensor:
   unit_of_measurement: "%"
   value_type: U_WORD
   state_class: "measurement"
+  disabled_by_default: true
 
 # --- input voltage ---
 - platform: modbus_controller
