@@ -41,8 +41,11 @@ In order to connect the MAX485 module to the nodeMCU the following mapping can b
 | GPI03   | RDX    | RO (Receiver Output)      |
 | GPIO5   | -      | RE (Receiver Enable)      |
 | GPIO5   | -      | DE (Driver Enable)        |
+| 5V      | VCC    | VCC
+|
+| GND     | GND    | GND
 
-Next, connect the VCC and GND pins. Finally, the A+ and B- ports of the MAX485 module should be connected to the A+ and B- ports on the C3 connector using a twisted pair. 
+Finally, the A+ and B- ports of the MAX485 module should be connected to the A+ and B- ports on the C3 connector using a twisted pair. 
 
 ### Example of minimal configuration yaml
 ```yaml
@@ -76,21 +79,21 @@ The following data fields have been identified from the holding registers. Curre
 | 0x070   | Model                             | U_WORD   | -    | -     | 0:E300 P; 2:E300 RF; 4:E400 RF                           |
 | 0x136   | Exhaust fan duty cycle            | U_WORD   | %    | 10    |                                                          |
 | 0x137   | Supply fan duty cycle             | U_WORD   | %    | 10    |                                                          |
-| 0x138   | Exhaust fan flow rate             | U_WORD   | m³/h | 1     |                                                          |
-| 0x139   | Supply fan flow rate              | U_WORD   | m³/h | 1     |                                                          |
+| 0x138   | Exhaust flow rate             | U_WORD   | m³/h | 1     |                                                          |
+| 0x139   | Supply flow rate              | U_WORD   | m³/h | 1     |                                                          |
 | 0x13A   | Exhaust fan speed                 | U_WORD   | RPM  | 1     |                                                          |
 | 0x13B   | Supply fan speed                  | U_WORD   | RPM  | 1     |                                                          |
-| 0x12C   | Outdoor air temperature           | S_WORD   | °C   | 10    |                                                          |
+| 0x12C   | Outdoor temperature           | S_WORD   | °C   | 10    |                                                          |
 | 0x12D   | Pre-heater temperature            | S_WORD   | °C   | 10    |                                                          |
-| 0x12F   | Supply air temperature            | S_WORD   | °C   | 10    |                                                          |
-| 0x130   | Extract air temperature           | S_WORD   | °C   | 10    |                                                          |
-| 0x131   | Exhaust air temperature           | S_WORD   | °C   | 10    |                                                          |
+| 0x12F   | Supply temperature            | S_WORD   | °C   | 10    |                                                          |
+| 0x130   | Extract temperature           | S_WORD   | °C   | 10    |                                                          |
+| 0x131   | Exhaust temperature           | S_WORD   | °C   | 10    |                                                          |
 | 0x132   | Outdoor humidity                  | U_WORD   | %    | 10    |                                                          |
 | 0x133   | Supply humidity                   | U_WORD   | %    | 10    |                                                          |
 | 0x134   | Extract humidity                  | U_WORD   | %    | 10    |                                                          |
 | 0x135   | Exhaust humidity                  | U_WORD   | %    | 10    |                                                          |
-| 0x141   | Exhaust fan flow rate setpoint    | U_WORD   | m³/h | 1     |                                                          | 
-| 0x140   | Supply fan flow rate setpoint     | U_WORD   | m³/h | 1     |                                                          |
+| 0x141   | Exhaust flow rate setpoint    | U_WORD   | m³/h | 1     |                                                          | 
+| 0x140   | Supply flow rate setpoint     | U_WORD   | m³/h | 1     |                                                          |
 | 0x145   | Bypass motor active               | U_WORD   | -    | 1     | 0:Off; 1:One on; 2:Both on                               |
 | 0x146   | Bypass setpoint                   | U_WORD   | %    | 1     | 0:Closed; 100:Fully open                                 |
 | 0x147   | Bypass position                   | U_WORD   | %    | 1     | 0:Closed; 100:Fully open                                 |
