@@ -56,6 +56,33 @@ sensor:
 # --- fan states --- 
 - platform: modbus_controller
   modbus_controller_id: modbus_device
+  name: "Exhaust fan duty cycle"
+  icon: mdi:fan
+  register_type: holding
+  address: 0x136
+  unit_of_measurement: "%"
+  value_type: U_WORD
+  accuracy_decimals: 1
+  state_class: "measurement"
+  id: zehnder_exhaust_duty
+  filters:
+    - multiply: 0.1
+- platform: modbus_controller
+  modbus_controller_id: modbus_device
+  name: "Supply fan duty cycle"
+  entity_category: "diagnostic"
+  icon: mdi:fan
+  register_type: holding
+  address: 0x137
+  unit_of_measurement: "%"
+  value_type: U_WORD
+  accuracy_decimals: 1
+  state_class: "measurement"
+  id: zehnder_supply_duty
+  filters:
+    - multiply: 0.1
+- platform: modbus_controller
+  modbus_controller_id: modbus_device
   name: "Exhaust fan speed"
   icon: mdi:fan
   register_type: holding
@@ -84,7 +111,7 @@ sensor:
   unit_of_measurement: "°C"
   device_class: "temperature"
   value_type: S_WORD
-  id: zehnder_t1
+  id: zehnder_outdoor_temp
   accuracy_decimals: 1
   state_class: "measurement"
   filters:
@@ -97,7 +124,7 @@ sensor:
   unit_of_measurement: "°C"
   device_class: "temperature"
   value_type: S_WORD
-  id: zehnder_t2
+  id: zehnder_pre_heater_temp
   accuracy_decimals: 1
   state_class: "measurement"
   filters:
@@ -110,7 +137,7 @@ sensor:
   unit_of_measurement: "°C"
   device_class: "temperature"
   value_type: S_WORD
-  id: zehnder_t4
+  id: zehnder_supply_temp
   accuracy_decimals: 1
   state_class: "measurement"
   filters:
@@ -123,7 +150,7 @@ sensor:
   unit_of_measurement: "°C"
   device_class: "temperature"
   value_type: S_WORD
-  id: zehnder_t5
+  id: zehnder_extract_temp
   accuracy_decimals: 1
   state_class: "measurement"
   filters:
@@ -136,7 +163,7 @@ sensor:
   unit_of_measurement: "°C"
   device_class: "temperature"
   value_type: S_WORD
-  id: zehnder_t6
+  id: zehnder_exhaust_temp
   accuracy_decimals: 1
   state_class: "measurement"
   filters:
@@ -325,35 +352,6 @@ sensor:
   unit_of_measurement: "m³/h"
   device_class: "volume_flow_rate"
 
-# --- fan diagnistics ---
-- platform: modbus_controller
-  modbus_controller_id: modbus_device
-  name: "Exhaust fan duty cycle"
-  icon: mdi:fan
-  register_type: holding
-  address: 0x136
-  unit_of_measurement: "%"
-  value_type: U_WORD
-  accuracy_decimals: 1
-  state_class: "measurement"
-  id: zehnder_exhaust_duty
-  filters:
-    - multiply: 0.1
-- platform: modbus_controller
-  modbus_controller_id: modbus_device
-  name: "Supply fan duty cycle"
-  entity_category: "diagnostic"
-  icon: mdi:fan
-  register_type: holding
-  address: 0x137
-  unit_of_measurement: "%"
-  value_type: U_WORD
-  accuracy_decimals: 1
-  state_class: "measurement"
-  id: zehnder_supply_duty
-  filters:
-    - multiply: 0.1
-
 # --- device info ---
 - platform: modbus_controller
   internal: true
@@ -393,8 +391,8 @@ text_sensor:
     lambda: |-
         uint16_t value = modbus_controller::word_from_hex_str(x, 0);
         switch (value) {
-          case 0: return std::string("Fault");
-          case 2: return std::string("Self-test");
+          case 0: return std::string("Error");
+          case 2: return std::string("Self-Test");
           case 10: return std::string("Normal");
           case 20: return std::string("Standby");
           case 42: return std::string("Maintenance Mode");
@@ -447,10 +445,10 @@ binary_sensor:
   id: zehnder_rf_input_enabled
 - platform: modbus_controller
   modbus_controller_id: modbus_device
-  name: "Pre-heater active"
+  name: "Pre-heater status"
   address: 0x13F
   register_type: holding
-  id: zehnder_pre_heater_active
+  id: zehnder_pre_heater_status
   device_class: heat
 - platform: template
   name: "Bypass"
