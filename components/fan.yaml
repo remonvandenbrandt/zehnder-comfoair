@@ -1,0 +1,73 @@
+output:
+- platform: esp8266_pwm
+  pin: GPIO5
+  frequency: 1kHz
+  id: fan_pwm_output
+
+globals:
+  - id: software_request
+    type: float
+    initial_value: '0.0'
+  - id: physical_request
+    type: float
+    initial_value: '0.0'
+
+script:
+  - id: sync_fan_logic
+    mode: restart
+    then:
+      - lambda: |-
+          float soft = id(software_request);
+          float phys = id(physical_request);
+          float ui_max = max(soft, phys);
+
+          // 1. Set the hardware PWM based on the software override
+          id(fan_pwm_output).set_level(soft);
+
+          // 2. Log the state to the console
+          ESP_LOGI("fan_logic", "Software: %.2f, Physical: %.2f -> Output: %.2f (UI Max: %.2f)", 
+                   soft, phys, soft, ui_max);
+
+          // 3. Update the UI entity
+          auto call = id(fan_ui).make_call();
+          call.set_state(true);
+          if (ui_max <= 0.1) call.set_speed(1);
+          else if (ui_max <= 0.6) call.set_speed(2);
+          else call.set_speed(3);
+          call.perform();
+
+fan:
+  - platform: template
+    name: "Fan"
+    id: fan_ui
+    speed_count: 3
+    on_speed_set:
+    - lambda: |-
+        ESP_LOGI("fan", "Software: %.2f", x);
+        // Update the software tracker
+        if (x == 1) id(software_request) = 0.0;
+        else if (x == 2) id(software_request) = 0.5;
+        else if (x == 3) id(software_request) = 1.0;
+        
+        id(sync_fan_logic)->execute();
+
+sensor:
+- platform: combination
+  id: physical_switch_level
+  type: max
+  sources:
+    - source: zehnder_rf_control_setpoint
+    - source: zehnder_three_way_control_setpoint
+    - source: zehnder_bathroom_control_setpoint
+  on_value:
+      then:
+        - lambda: |-
+            // Update the physical tracker
+            if (x <= 10) id(physical_request) = 0.0;
+            else if (x <= 60) id(physical_request) = 0.5;
+            else id(physical_request) = 1.0;
+            
+            // Note: We do NOT set the hardware here, 
+            // because you want the UI/Software to be the master.
+            // But we run the script to update the UI "Max" display.
+            id(sync_fan_logic)->execute();
