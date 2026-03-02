@@ -7,10 +7,27 @@ output:
 globals:
   - id: software_request
     type: float
+    restore_value: yes      # Remembers your UI setting after a power cut
     initial_value: '0.0'
+    
   - id: physical_request
     type: float
+    restore_value: no       # Always reads fresh from the physical switch
     initial_value: '0.0'
+    
+  - id: is_syncing
+    type: bool
+    initial_value: 'false'  # Prevents the feedback loop during UI updates
+
+binary_sensor:
+  - platform: template
+    id: fan_fault_sensor
+    lambda: |-
+      if (id(zehnder_status).state == "Normal") {
+        return false;
+      } else {
+        return true;
+      }
 
 script:
   - id: sync_fan_logic
@@ -20,27 +37,48 @@ script:
           float soft = id(software_request);
           float phys = id(physical_request);
           float ui_max = max(soft, phys);
+          
+          // 1. Check for Fault first
+          if (id(fan_fault_sensor).state) {
+            ESP_LOGW("fan_logic", "FAULT DETECTED! Forcing Fan UI Off.");
+            
+            // Set hardware to 0 (or a safe speed)
+            id(fan_pwm_output).set_level(0.0);
+            
+            // Update UI to "Off"
+            id(is_syncing) = true;
+            auto call = id(fan_ui).make_call();
+            call.set_state(false); // This shows the fan as "Off" in HA
+            call.perform();
+            id(is_syncing) = false;
+            return; // Stop execution here
+          }
 
-          // 1. Set the hardware PWM based on the software override
+          // 2. Normal Operation (No Fault)
           id(fan_pwm_output).set_level(soft);
+          
+          ESP_LOGI("fan_logic", "Output: %.2f (UI Max: %.2f)", soft, ui_max);
 
-          // 2. Log the state to the console
-          ESP_LOGI("fan_logic", "Software: %.2f, Physical: %.2f -> Output: %.2f (UI Max: %.2f)", 
-                   soft, phys, soft, ui_max);
-
-          // 3. Update the UI entity
+          id(is_syncing) = true;
           auto call = id(fan_ui).make_call();
           call.set_state(true);
           if (ui_max <= 0.1) call.set_speed(1);
           else if (ui_max <= 0.6) call.set_speed(2);
           else call.set_speed(3);
           call.perform();
+          id(is_syncing) = false;
 
 fan:
   - platform: template
     name: "Fan"
     id: fan_ui
     speed_count: 3
+    on_turn_on:
+      - lambda: |-
+          if (id(fan_fault_sensor).state) {
+            ESP_LOGE("fan_ui", "Manual turn on rejected: Fault active!");
+            id(sync_fan_logic)->execute(); // Force UI back to Off
+          }
     on_speed_set:
     - lambda: |-
         ESP_LOGI("fan", "Software: %.2f", x);
