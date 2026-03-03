@@ -11,6 +11,10 @@ globals:
   - id: is_syncing
     type: bool
     initial_value: 'false'  # Prevents the feedback loop during UI updates
+  - id: pre_boost_fan_speed
+    type: int
+    restore_value: no
+    initial_value: '0' 
 
 binary_sensor:
   - platform: template
@@ -35,7 +39,7 @@ script:
           if (id(fan_fault_sensor).state) {        
             // Update UI to "Off"
             id(is_syncing) = true;
-            auto call = id(fan_ui).make_call();
+            auto call = id(zehnder_fan).make_call();
             call.set_state(false); // This shows the fan as "Off" in HA
             call.perform();
             id(is_syncing) = false;
@@ -44,11 +48,9 @@ script:
 
           // 2. Normal Operation (No Fault)
           id(${fan_output}).set_level(soft);
-          
-          ESP_LOGI("fan_logic", "Output: %.2f (UI Max: %.2f)", soft, ui_max);
 
           id(is_syncing) = true;
-          auto call = id(fan_ui).make_call();
+          auto call = id(zehnder_fan).make_call();
           call.set_state(true);
           if (ui_max <= 0.1) call.set_speed(1);
           else if (ui_max <= 0.6) call.set_speed(2);
@@ -56,10 +58,55 @@ script:
           call.perform();
           id(is_syncing) = false;
 
+  - id: boost_timer_script
+    mode: restart
+    parameters:
+      delay_min: int
+    then:
+      # 1. Save current state
+      - lambda: |-
+          id(pre_boost_fan_speed) = id(zehnder_fan).speed;
+      
+      # 2. Activate Boost
+      - fan.turn_on:
+          id: zehnder_fan
+          speed: 100
+      
+      # 3. Wait
+      - delay: !lambda return delay_min*60000;
+      
+      # 4. Revert to old state
+      - fan.turn_on:
+          id: zehnder_fan
+          speed: !lambda 'return id(pre_boost_fan_speed);'
+
+button:
+  - platform: template
+    name: "Fan Boost (10 min)"
+    on_press:
+      then:
+        - script.execute: 
+            id: boost_timer_script
+            delay_min: 10
+  - platform: template
+    name: "Fan Boost (30 min)"
+    on_press:
+      then:
+        - script.execute: 
+            id: boost_timer_script
+            delay_min: 30
+  - platform: template
+    name: "Fan Boost (60 min)"
+    on_press:
+      then:
+        - script.execute: 
+            id: boost_timer_script
+            delay_min: 60
+
 fan:
   - platform: template
     name: "Fan"
-    id: fan_ui
+    id: zehnder_fan
     speed_count: 3
     on_turn_on:
       - lambda: |-
@@ -67,16 +114,18 @@ fan:
             id(sync_fan_logic)->execute(); // Force UI back to Off
           }
     on_speed_set:
-    - lambda: |-
-        // If the script is the one changing the speed, do nothing!
-        if (id(is_syncing)) return; 
+      then:
+        - script.stop: boost_timer_script
+        - lambda: |-
+            // If the script is the one changing the speed, do nothing!
+            if (id(is_syncing)) return; 
 
-        // Otherwise, it was a user click in the app
-        if (x == 1) id(software_request) = 0.0;
-        else if (x == 2) id(software_request) = 0.5;
-        else if (x == 3) id(software_request) = 1.0;
-        
-        id(sync_fan_logic)->execute();
+            // Otherwise, it was a user click in the app
+            if (x == 1) id(software_request) = 0.0;
+            else if (x == 2) id(software_request) = 0.5;
+            else if (x == 3) id(software_request) = 1.0;
+            
+            id(sync_fan_logic)->execute();
 
 sensor:
 - platform: combination
