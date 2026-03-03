@@ -82,21 +82,24 @@ script:
 
 button:
   - platform: template
-    name: "Fan Boost (10 min)"
+    name: "Fan Max (10 min)"
+    icon: mdi:fast-forward-10
     on_press:
       then:
         - script.execute: 
             id: boost_timer_script
             delay_min: 10
   - platform: template
-    name: "Fan Boost (30 min)"
+    name: "Fan Max (30 min)"
+    icon: mdi:fast-forward-30
     on_press:
       then:
         - script.execute: 
             id: boost_timer_script
             delay_min: 30
   - platform: template
-    name: "Fan Boost (60 min)"
+    name: "Fan Max (60 min)"
+    icon: mdi:fast-forward-60
     on_press:
       then:
         - script.execute: 
