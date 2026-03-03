@@ -81,13 +81,15 @@ fan:
           }
     on_speed_set:
     - lambda: |-
-        ESP_LOGI("fan", "Software: %.2f", x);
-        // Update the software tracker
-        if (x == 1) id(software_request) = 0.0;
-        else if (x == 2) id(software_request) = 0.5;
-        else if (x == 3) id(software_request) = 1.0;
-        
-        id(sync_fan_logic)->execute();
+          // If the script is the one changing the speed, do nothing!
+          if (id(is_syncing)) return; 
+
+          // Otherwise, it was a user click in the app:
+          if (x == 1) id(software_request) = 0.0;
+          else if (x == 2) id(software_request) = 0.5;
+          else if (x == 3) id(software_request) = 1.0;
+          
+          id(sync_fan_logic)->execute();
 
 sensor:
 - platform: combination
