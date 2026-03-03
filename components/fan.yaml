@@ -1,4 +1,3 @@
-
 globals:
   - id: software_request
     type: float
@@ -82,7 +81,8 @@ script:
 
 button:
   - platform: template
-    name: "Fan Max (10 min)"
+    name: "Max (10 min)"
+    id: zehnder_boost_10
     icon: mdi:fast-forward-10
     on_press:
       then:
@@ -90,7 +90,8 @@ button:
             id: boost_timer_script
             delay_min: 10
   - platform: template
-    name: "Fan Max (30 min)"
+    name: "Max (30 min)"
+    id: zehnder_boost_30
     icon: mdi:fast-forward-30
     on_press:
       then:
@@ -98,7 +99,8 @@ button:
             id: boost_timer_script
             delay_min: 30
   - platform: template
-    name: "Fan Max (60 min)"
+    name: "Max (60 min)"
+    id: zehnder_boost_60
     icon: mdi:fast-forward-60
     on_press:
       then:
