@@ -1,20 +1,13 @@
-output:
-- platform: esp8266_pwm
-  pin: GPIO5
-  frequency: 1kHz
-  id: fan_pwm_output
 
 globals:
   - id: software_request
     type: float
     restore_value: yes      # Remembers your UI setting after a power cut
-    initial_value: '0.0'
-    
-  - id: physical_request
+    initial_value: '0.5'
+  - id: hardware_request
     type: float
-    restore_value: no       # Always reads fresh from the physical switch
+    restore_value: no
     initial_value: '0.0'
-    
   - id: is_syncing
     type: bool
     initial_value: 'false'  # Prevents the feedback loop during UI updates
@@ -35,16 +28,11 @@ script:
     then:
       - lambda: |-
           float soft = id(software_request);
-          float phys = id(physical_request);
+          float phys = id(hardware_request);
           float ui_max = max(soft, phys);
           
-          // 1. Check for Fault first
-          if (id(fan_fault_sensor).state) {
-            ESP_LOGW("fan_logic", "FAULT DETECTED! Forcing Fan UI Off.");
-            
-            // Set hardware to 0 (or a safe speed)
-            id(fan_pwm_output).set_level(0.0);
-            
+          // 1. Show fan entity as "Off" when there is a fault
+          if (id(fan_fault_sensor).state) {        
             // Update UI to "Off"
             id(is_syncing) = true;
             auto call = id(fan_ui).make_call();
@@ -55,7 +43,7 @@ script:
           }
 
           // 2. Normal Operation (No Fault)
-          id(fan_pwm_output).set_level(soft);
+          id(${fan_output}).set_level(soft);
           
           ESP_LOGI("fan_logic", "Output: %.2f (UI Max: %.2f)", soft, ui_max);
 
@@ -76,20 +64,19 @@ fan:
     on_turn_on:
       - lambda: |-
           if (id(fan_fault_sensor).state) {
-            ESP_LOGE("fan_ui", "Manual turn on rejected: Fault active!");
             id(sync_fan_logic)->execute(); // Force UI back to Off
           }
     on_speed_set:
     - lambda: |-
-          // If the script is the one changing the speed, do nothing!
-          if (id(is_syncing)) return; 
+        // If the script is the one changing the speed, do nothing!
+        if (id(is_syncing)) return; 
 
-          // Otherwise, it was a user click in the app:
-          if (x == 1) id(software_request) = 0.0;
-          else if (x == 2) id(software_request) = 0.5;
-          else if (x == 3) id(software_request) = 1.0;
-          
-          id(sync_fan_logic)->execute();
+        // Otherwise, it was a user click in the app
+        if (x == 1) id(software_request) = 0.0;
+        else if (x == 2) id(software_request) = 0.5;
+        else if (x == 3) id(software_request) = 1.0;
+        
+        id(sync_fan_logic)->execute();
 
 sensor:
 - platform: combination
@@ -102,12 +89,11 @@ sensor:
   on_value:
       then:
         - lambda: |-
-            // Update the physical tracker
-            if (x <= 10) id(physical_request) = 0.0;
-            else if (x <= 60) id(physical_request) = 0.5;
-            else id(physical_request) = 1.0;
+            // Update the hardware tracker
+            if (x <= 10) id(hardware_request) = 0.0;
+            else if (x <= 60) id(hardware_request) = 0.5;
+            else id(hardware_request) = 1.0;
             
             // Note: We do NOT set the hardware here, 
-            // because you want the UI/Software to be the master.
-            // But we run the script to update the UI "Max" display.
+            // but we run the script to update the UI.
             id(sync_fan_logic)->execute();
