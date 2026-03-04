@@ -1,8 +1,8 @@
 ## ESPHome Zehnder ComfoAir E300/E400
-ESPHome component for communication with the Zehnder ComfoAir E300/E400 heat recovering ventilation units using modbus RTU. This module allows for reading sensor states into Home-assistant.
+Interact with Zehnder ComfoAir E300/E400 using ESPHome and Home Assistant. This ESPHome component allows interaction with the Zehnder ComfoAir E300/E400 heat recovering ventilation units. Sensor states are read using modbus RTU, while the unit is controlled using the analog input.
 
 ### Setup 
-The component uses modbus RTU serial communication over RS485 to interface with the ventilation unit. The serial communication is available on the C3 connector. The serial configuration is shown in the following table:
+The component uses modbus RTU serial communication over RS485 to interface with the ventilation unit, furthermore the analog input on the C1 connector is used to control the ventilation level. The serial communication is available on the C3 connector. The serial configuration is shown in the following table:
 
 | Baud rate | Word length | Parity | Stop bits |
 |-----------|-------------|--------|-----------|
@@ -46,12 +46,19 @@ In order to connect the MAX485 module to the nodeMCU the following mapping can b
 
 Finally, the A+ and B- ports of the MAX485 module should be connected to the A+ and B- ports on the C3 connector using a twisted pair. 
 
+
+### Fan control
+In order to control the fan state, the analog (0-10V) input on the C1 connector is used. Since the ESP chip can only provide 3.3V, the `max instelling` on the unit must be lowered to 3.1.This will make sure that the unit interprets 3.3.V as the maximum ventilation level. The setting is located at ``menu->login(pwd 4210) -> analog 0-10V -> max. instelling``.
+
+Three options are available, on the ESP8266 software PWM can be used to generate the required signal, on the ESP32 the build in DAC can be used. Finally, an external DAC can be used (e.g. DFRobot Gravity GP8211S DAC Module). This is is especially useful if you are using the ComfoConnect Splitter in combination with multiple wired 0-10V input. In this case an external DAC is needed that can supply 10V.
+
 ### Example of minimal configuration yaml
 ```yaml
 substitutions:
   tx_pin: GPIO01
   rx_pin: GPIO03
   update_interval: 15s
+  fan_output: fan_output
 
 # modbus: # uncomment for MAX485 chip without automatic flow control
 #   flow_control_pin: GPIO05
@@ -60,11 +67,27 @@ packages:
   remote_package:
     url: https://github.com/CodedCactus/zehnder-comfoair
     ref: main
-    files: [components/zehnder.yaml]
+    files: [components/zehnder.yaml,
+            components/fan.yaml] # commend out the fan.yaml if you don't want fan control
     refresh: 0s
     
+output: 
+- platform: esp8266_pwm
+  pin: GPIO5
+  frequency: 1kHz
+  id: fan_output
+
 logger:
   baud_rate: 0 # disable logger for hardware UART support
+```
+
+On ESP32 the output can be configured as follows:
+
+```yaml
+output:
+  - platform: esp32_dac
+    pin: GPIO25
+    id: fan_output
 ```
 
 ### Registry table
