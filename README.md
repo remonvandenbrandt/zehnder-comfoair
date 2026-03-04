@@ -48,9 +48,9 @@ Finally, the A+ and B- ports of the MAX485 module should be connected to the A+ 
 
 
 ### Fan control
-In order to control the fan state, the analog (0-10V) input on the C1 connector is used. Since the ESP chip can only provide 3.3V, the `max instelling` on the unit must be lowered to 3.1.This will make sure that the unit interprets 3.3.V as the maximum ventilation level. The setting is located at ``menu->login(pwd 4210) -> analog 0-10V -> max. instelling``.
+In order to control the fan state, the analog (0-10V) input on the C1 connector is used. Since the ESP chip can only provide 3.3V, the `max instelling` on the unit must be lowered to 3.1V. This will make sure that the unit interprets 3.3.V as the maximum ventilation level. The setting is located at ``menu -> login(pwd 4210) -> analog 0-10V -> max. instelling``.
 
-Three options are available, on the ESP8266 software PWM can be used to generate the required signal, on the ESP32 the build in DAC can be used. Finally, an external DAC can be used (e.g. DFRobot Gravity GP8211S DAC Module). This is is especially useful if you are using the ComfoConnect Splitter in combination with multiple wired 0-10V input. In this case an external DAC is needed that can supply 10V.
+Three options are available. On the ESP8266, software PWM can be used to generate the required signal. On the ESP32, the built-in DAC can be used. Finally, an external DAC can be used (e.g. DFRobot Gravity GP8211S DAC Module). This is is especially useful if you are using the ComfoConnect Splitter in combination with multiple wired 0-10V input. In this case an external DAC is needed that can supply 10V.
 
 ### Example of minimal configuration yaml
 ```yaml
