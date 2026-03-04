@@ -57,12 +57,12 @@ The following schematic shows how to connect the hardware.
 
 ```
 +---------------+                                    +-------------+
-|          12V  |                                    |             |
-|   C1   0-10V  o------------------------------------o GPIOxx      |
-|          GND  o------------------------------------o GND         |
+|         12V   |                                    |             |
+|   C1    0-10V o------------------------------------o GPIOxx      |
+|         GND   o------------------------------------o GND         |
 |  [ComfoAir    |                                    |             |
 |   E300/E400]  |       +--------------------+       |    [ESP]    |
-|(        B-    o-------o B-             3v3 o-------o 3v3         |
+|         B-    o-------o B-             VCC o-------o 5V          |
 |   C3    A+    o-------o A+             GND o-------o GND         |
 |         GND   |       |      [MAX485]      |       |             |
 +---------------+       |                 TX o-------o TXD         |
@@ -71,6 +71,7 @@ The following schematic shows how to connect the hardware.
 ```
 
 ### Example of minimal configuration yaml
+
 ```yaml
 substitutions:
   tx_pin: GPIO01

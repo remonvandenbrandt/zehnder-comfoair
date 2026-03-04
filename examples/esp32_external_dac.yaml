@@ -1,0 +1,58 @@
+substitutions:
+  tx_pin: GPIO27
+  rx_pin: GPIO25
+  update_interval: 15s
+  fan_output: fan_output
+
+esphome:
+  name: zehnder-comfoair
+  friendly_name: Zehnder Comfoair
+
+esp32: 
+  board: esp32dev 
+  framework: 
+    type: esp-idf
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  fast_connect: on
+  min_auth_mode: wpa2
+
+api:
+  encryption:
+    key: !secret api_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+packages:
+  remote_package:
+    url: https://github.com/CodedCactus/zehnder-comfoair
+    ref: 'main'
+    files: [components/zehnder.yaml,
+            components/fan.yaml]
+    refresh: 0s
+    
+i2c:
+  - id: bus_a
+    sda: GPIO23
+    scl: GPIO22
+    scan: true
+
+gp8403:
+  id: gp8211
+  voltage: 10V
+  model: GP8413
+  i2c_id: bus_a
+
+output:
+  - platform: gp8403
+    id: fan_output
+    gp8403_id: gp8211
+    channel: 0
+
+logger:
+  baud_rate: 0 # disable logger for hardware UART support
+  level: INFO

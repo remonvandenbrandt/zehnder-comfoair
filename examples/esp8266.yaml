@@ -1,0 +1,46 @@
+substitutions:
+  tx_pin: GPIO01
+  rx_pin: GPIO03
+  update_interval: 15s
+  fan_output: fan_output
+
+esphome:
+  name: zehnder-comfoair
+  friendly_name: Zehnder Comfoair
+
+esp8266:
+  board: nodemcuv2
+  framework:
+    version: recommended
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  fast_connect: on
+  min_auth_mode: wpa2
+
+api:
+  encryption:
+    key: !secret device_api_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+packages:
+  remote_package:
+    url: https://github.com/CodedCactus/zehnder-comfoair
+    ref: 'main'
+    files: [components/zehnder.yaml,
+            components/fan.yaml]
+    refresh: 0s
+
+output:
+- platform: esp8266_pwm
+  pin: GPIO5
+  frequency: 1kHz
+  id: fan_output
+
+logger:
+  baud_rate: 0 # disable logger for hardware UART support
+  level: INFO
