@@ -89,7 +89,7 @@ button:
       then:
         - script.execute: 
             id: boost_timer_script
-            delay_min: 1
+            delay_min: 10
   - platform: template
     name: "Max (30 min)"
     id: zehnder_boost_30
