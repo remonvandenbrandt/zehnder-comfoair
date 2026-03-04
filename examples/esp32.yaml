@@ -25,7 +25,7 @@ api:
 
 ota:
   - platform: esphome
-    password: !secret oya_password
+    password: !secret ota_password
 
 packages:
   remote_package:
@@ -39,7 +39,3 @@ output:
   - platform: esp32_dac
     pin: GPIO25
     id: fan_output
-
-logger:
-  baud_rate: 0 # disable logger for hardware UART support
-  level: INFO

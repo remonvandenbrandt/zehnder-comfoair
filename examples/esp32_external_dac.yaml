@@ -52,7 +52,3 @@ output:
     id: fan_output
     gp8403_id: gp8211
     channel: 0
-
-logger:
-  baud_rate: 0 # disable logger for hardware UART support
-  level: INFO
