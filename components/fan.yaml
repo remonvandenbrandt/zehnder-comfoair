@@ -65,12 +65,13 @@ script:
       # 1. Save current state
       - lambda: |-
           id(pre_boost_fan_speed) = id(zehnder_fan).speed;
+          ESP_LOGI("fan", "pre_boost_speed: %.2f", id(zehnder_fan).speed);
       
       # 2. Activate Boost
-      - fan.turn_on:
-          id: zehnder_fan
-          speed: 100
-      
+      - lambda: |-
+          id(software_request) = 1.0;
+          id(sync_fan_logic)->execute();
+
       # 3. Wait
       - delay: !lambda return delay_min*60000;
       
@@ -88,7 +89,7 @@ button:
       then:
         - script.execute: 
             id: boost_timer_script
-            delay_min: 10
+            delay_min: 1
   - platform: template
     name: "Max (30 min)"
     id: zehnder_boost_30
@@ -120,10 +121,11 @@ fan:
           }
     on_speed_set:
       then:
-        - script.stop: boost_timer_script
         - lambda: |-
             // If the script is the one changing the speed, do nothing!
             if (id(is_syncing)) return; 
+
+            id(boost_timer_script).stop(); // overwrite the boost mode
 
             // Otherwise, it was a user click in the app
             if (x == 1) id(software_request) = 0.0;
