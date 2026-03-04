@@ -52,6 +52,23 @@ In order to control the fan state, the analog (0-10V) input on the C1 connector 
 
 Three options are available. On the ESP8266, software PWM can be used to generate the required signal. On the ESP32, the built-in DAC can be used. Finally, an external DAC can be used (e.g. DFRobot Gravity GP8211S DAC Module). This is is especially useful if you are using the ComfoConnect Splitter in combination with multiple wired 0-10V input. In this case an external DAC is needed that can supply 10V.
 
+### Schematic
+The following schematic shows how to connect the hardware.
+
+```
++---------------+                                    +-------------+
+|          12V  |                                    |             |
+|   C1   0-10V  o------------------------------------o GPIOxx      |
+|          GND  o------------------------------------o GND         |
+|  [ComfoAir    |                                    |             |
+|   E300/E400]  |       +--------------------+       |    [ESP]    |
+|(        B-    o-------o B-             3v3 o-------o 3v3         |
+|   C3    A+    o-------o A+             GND o-------o GND         |
+|         GND   |       |      [MAX485]      |       |             |
++---------------+       |                 TX o-------o TXD         |
+                        |                 RX o-------o RXD         |
+                        +--------------------+       +-------------+
+
 ### Example of minimal configuration yaml
 ```yaml
 substitutions:
