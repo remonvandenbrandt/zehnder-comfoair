@@ -392,6 +392,7 @@ text_sensor:
         switch (value) {
           case 0: return std::string("Error");
           case 2: return std::string("Self-Test");
+          case 3: return std::string("Waiting for user input");
           case 10: return std::string("Normal");
           case 20: return std::string("Standby");
           case 42: return std::string("Maintenance Mode");
