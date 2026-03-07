@@ -1,5 +1,5 @@
 ## ESPHome Zehnder ComfoAir E300/E400
-Interact with Zehnder ComfoAir E300/E400 using ESPHome and Home AssistantThis ESPHome component allows interaction with the Zehnder ComfoAir E300/E400 heat recovering ventilation units. Sensor states are read using modbus RTU, while the unit is controlled using the analog input. This  integration is likely to work with the ComfoAir PRO 200/250/300 series as well, but this remains untested.
+Interact with Zehnder ComfoAir E300/E400 using ESPHome and Home AssistantThis ESPHome component allows interaction with the Zehnder ComfoAir E300/E400 heat recovering ventilation units. Sensor states are read using modbus RTU, while the unit is controlled using the analog input. This integration is likely to work with the ComfoAir PRO 200/250/300 series as well, but this remains untested.
 
 ### Setup 
 The component uses modbus RTU serial communication over RS485 to interface with the ventilation unit, furthermore the analog input on the C1 connector is used to control the ventilation level. The serial communication is available on the C3 connector. The serial configuration is shown in the following table:
@@ -32,6 +32,9 @@ Since the RS485 connection is half-duplex, it cannot send and receive data at th
 Note that the pin-out differs. The module with automatic flow control has input pins labeled TDX and RDX while the module without automatic flow control has pins labeled DI, RO, RE and DE.
 
 Both modules can be used in this project, the only difference being the availability of the module, and the requirement for an additional free pin.
+
+[!WARNING]
+Check the input voltage for the MAX485 module. Most modules's with flow control support both 3.3 V and 5 V. However, some units (mainly those without flow control) only support 5 V. These units will use 5 V logic levels that might damage your ESP device when used without a level shifter. Alternatively, you can use a MAX3485 module which support 3.3 V logic natively. 
 
 In order to connect the MAX485 module to the nodeMCU the following mapping can be used. 
 
@@ -66,7 +69,7 @@ The following schematic shows how to connect the hardware.
 |   E300/E400]  |       +--------------------+       |    [ESP]    |
 |         B-    o-------o B-             VCC o-------o 3v3         |
 |   C3    A+    o-------o A+             GND o-------o GND         |
-|         GND   |       |      [MAX485]      |       |             |
+|               |       |      [MAX485]      |       |             |
 +---------------+       |                 TX o-------o TXD         |
                         |                 RX o-------o RXD         |
                         +--------------------+       +-------------+
