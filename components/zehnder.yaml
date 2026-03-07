@@ -248,6 +248,16 @@ sensor:
   value_type: U_WORD
   state_class: "measurement"
   disabled_by_default: true
+  on_value:
+    then:
+      - lambda: |-
+          if ((x > 0) && (x <= 100)) {
+            id(zehnder_bypass).publish_state(true);
+          } else if (x == 0) {
+            id(zehnder_bypass).publish_state(false);
+          } else {
+            id(zehnder_bypass).publish_state({});
+          }
   
 # --- control setpoints ---
 - platform: modbus_controller
@@ -456,12 +466,7 @@ binary_sensor:
   id: zehnder_bypass
   icon: mdi:valve
   device_class: opening
-  lambda: |-
-    if (id(zehnder_bypass_position).state > 0) {
-      return true;
-    } else {
-      return false;
-    }
+
 - platform: modbus_controller
   modbus_controller_id: modbus_device
   internal: true
