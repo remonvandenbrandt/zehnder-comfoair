@@ -33,8 +33,8 @@ Note that the pin-out differs. The module with automatic flow control has input 
 
 Both modules can be used in this project, the only difference being the availability of the module, and the requirement for an additional free pin.
 
-[!WARNING]
-Check the input voltage for the MAX485 module. Most modules's with flow control support both 3.3 V and 5 V. However, some units (mainly those without flow control) only support 5 V. These units will use 5 V logic levels that might damage your ESP device when used without a level shifter. Alternatively, you can use a MAX3485 module which support 3.3 V logic natively. 
+> [!WARNING]
+> Check the input voltage for the MAX485 module. Most modules's with flow control support both 3.3 V and 5 V. However, some units (mainly those without flow control) only support 5 V. These units will use 5 V logic levels that might damage your ESP device when used without a level shifter. Alternatively, you can use a MAX3485 module which support 3.3 V logic natively. 
 
 In order to connect the MAX485 module to the nodeMCU the following mapping can be used. 
 
