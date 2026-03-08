@@ -17,6 +17,11 @@ modbus_controller:
   modbus_id: modbus1
   setup_priority: -10
   update_interval: ${update_interval}
+  on_offline:
+    then:
+      - text_sensor.template.publish:
+          id: zehnder_status
+          state: "Offline"
 
 sensor:
 # --- ventilation level ---
