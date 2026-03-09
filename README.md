@@ -32,7 +32,7 @@ Since the RS485 connection is half-duplex, it cannot send and receive data at th
 Note that the pin-out differs. The module with automatic flow control has input pins labeled TDX and RDX while the module without automatic flow control has pins labeled DI, RO, RE and DE.
 
 > [!WARNING]
-> Check the input voltage for the MAX485 module. Most modules with flow control support both 3.3 V and 5 V. However, some units (mainly those without flow control) only support 5 V. These units will use 5 V logic levels that might damage your ESP device when used without a level shifter. Alternatively, you can use a MAX3485 module which support 3.3 V logic natively. 
+> Check the input voltage for the MAX485 module. Most modules support both 3.3 V and 5 V. However, some units (mainly those without flow control) only support 5 V. These units will use 5 V logic levels that might damage your ESP device when used without a level shifter. Alternatively, you can use a MAX3485 module which support 3.3 V logic natively. 
 
 Both modules can be used in this project, the only difference being the availability of the module, and the requirement for an additional free pin.
 
@@ -119,7 +119,7 @@ The following data fields have been identified from the holding registers. Curre
 
 | Address | Name                             | Datatype | Unit | Scale | Note |
 |-------- |----------------------------------|----------|------|-------|--|
-| 0x065   | Device Status                    | U_WORD   | -    | -     | 0: Error; 2: Self Test; 3: Waiting for user input; 10: Normal; 20: Standby; 42: Maintenance Mode |
+| 0x065   | Device Status                    | U_WORD   | -    | -     | 0: Error; 1:Initializing; 2: Self Test; 3: Waiting for user input; 10: Normal; 20: Standby; 42: Maintenance Mode |
 | 0x06E   | Firmware version                 | U_WORD   | -    | -     | 20800 = 2.8.0 |
 | 0x06F   | Orientation                      | U_WORD   | -    | -     | 0:Right; 1:Left |
 | 0x070   | Model                            | U_WORD   | -    | -     | 0:E300 P; 2:E300 RF; 3:E400 RF |
