@@ -406,11 +406,12 @@ text_sensor:
         uint16_t value = modbus_controller::word_from_hex_str(x, 0);
         switch (value) {
           case 0: return std::string("Error");
+          case 1: return std::string("Initializing");
           case 2: return std::string("Self-Test");
           case 3: return std::string("Waiting for user input");
           case 10: return std::string("Normal");
-          case 20: return std::string("Standby");
-          case 42: return std::string("Maintenance Mode");
+          case 11: case 20: return std::string("Standby");
+          case 40: case 41: case 42: return std::string("Maintenance Mode");
           default: return std::string("Unknown (") + std::to_string(value) + ")";
         }
         return x;
