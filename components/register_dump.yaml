@@ -108,31 +108,17 @@ script:
             return;
           }
 
-          std::string header = "Register Dump\nAddr,Value\n";
-          std::string full_result = header + id(register_dump_result);
+          std::string result = "Addr,Value\n" + id(register_dump_result);
 
-          // Log the full dump to ESPHome logs as well
+          // Log to ESPHome logs
           ESP_LOGI("register_dump", "=== REGISTER DUMP START ===");
-          ESP_LOGI("register_dump", "%s", full_result.c_str());
+          ESP_LOGI("register_dump", "%s", result.c_str());
           ESP_LOGI("register_dump", "=== REGISTER DUMP END ===");
 
-          id(zehnder_register_dump_output).publish_state("Complete (" + std::to_string(375) + " registers)");
+          // Publish full CSV to the text sensor
+          id(zehnder_register_dump_output).publish_state(result);
 
-          // Fire HA persistent notification
-          id(register_dump_result) = full_result; // store for the service call below
-
-      - homeassistant.service:
-          service: persistent_notification.create
-          data:
-            title: "Zehnder ComfoAir - Register Dump"
-            notification_id: "zehnder_register_dump"
-          variables:
-            dump_data: 'return id(register_dump_result);'
-          data_template:
-            message: "{{ dump_data }}"
-
-      # Free memory after sending
-      - lambda: |-
+          // Free the global buffer
           id(register_dump_result) = "";
           id(register_dump_result).shrink_to_fit();
 
