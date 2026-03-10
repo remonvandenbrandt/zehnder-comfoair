@@ -21,7 +21,7 @@ script:
     mode: single
     then:
       - lambda: |-
-          id(register_dump_result) = "";
+          id(register_dump_result) = "| Addr (hex) | Addr (dec) | Value |\n|---|---|---|\n";
           id(register_dump_batch) = 0;
           id(zehnder_register_dump_output).publish_state("Reading registers...");
           ESP_LOGI("register_dump", "Starting register dump (0-374)...");
@@ -47,10 +47,10 @@ script:
 
               for (int i = 0; i < count && (i * 2 + 1) < (int)data.size(); i++) {
                 uint16_t value = (data[i * 2] << 8) | data[i * 2 + 1];
-                if (!id(register_dump_result).empty()) {
-                  id(register_dump_result) += ";";
-                }
-                id(register_dump_result) += std::to_string(start + i) + ":" + std::to_string(value);
+                int addr = start + i;
+                char hex[8];
+                snprintf(hex, sizeof(hex), "0x%03X", addr);
+                id(register_dump_result) += "| " + std::string(hex) + " | " + std::to_string(addr) + " | " + std::to_string(value) + " |\n";
               }
 
               id(register_dump_batch)++;
