@@ -30,7 +30,7 @@ script:
       - lambda: |-
           auto *controller = id(modbus_device);
           esphome::modbus_controller::ModbusCommandItem cmd =
-            esphome::modbus_controller::ModbusCommandItem::create_read_holding_command(controller, 0, 125);
+            esphome::modbus_controller::ModbusCommandItem::create_read_command(controller, esphome::modbus_controller::ModbusRegisterType::HOLDING, 0, 125);
 
           cmd.on_data_func = [](esphome::modbus_controller::ModbusRegisterType register_type,
                                 uint16_t start_address,
@@ -57,7 +57,7 @@ script:
 
           auto *controller = id(modbus_device);
           esphome::modbus_controller::ModbusCommandItem cmd =
-            esphome::modbus_controller::ModbusCommandItem::create_read_holding_command(controller, 125, 125);
+            esphome::modbus_controller::ModbusCommandItem::create_read_command(controller, esphome::modbus_controller::ModbusRegisterType::HOLDING, 125, 125);
 
           cmd.on_data_func = [](esphome::modbus_controller::ModbusRegisterType register_type,
                                 uint16_t start_address,
@@ -84,7 +84,7 @@ script:
 
           auto *controller = id(modbus_device);
           esphome::modbus_controller::ModbusCommandItem cmd =
-            esphome::modbus_controller::ModbusCommandItem::create_read_holding_command(controller, 250, 125);
+            esphome::modbus_controller::ModbusCommandItem::create_read_command(controller, esphome::modbus_controller::ModbusRegisterType::HOLDING, 250, 125);
 
           cmd.on_data_func = [](esphome::modbus_controller::ModbusRegisterType register_type,
                                 uint16_t start_address,
