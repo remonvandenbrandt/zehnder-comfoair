@@ -126,8 +126,10 @@ script:
           data:
             title: "Zehnder ComfoAir - Register Dump"
             notification_id: "zehnder_register_dump"
+          variables:
+            dump_data: 'return id(register_dump_result);'
           data_template:
-            message: !lambda 'return id(register_dump_result);'
+            message: "{{ dump_data }}"
 
       # Free memory after sending
       - lambda: |-
