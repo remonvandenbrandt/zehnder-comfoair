@@ -14,6 +14,10 @@ globals:
     type: int
     restore_value: no
     initial_value: '0' 
+  - id: boost_active
+    type: bool
+    restore_value: no
+    initial_value: 'false'
 
 binary_sensor:
   - platform: template
@@ -65,28 +69,27 @@ script:
       
           // 2. Activate Boost
           id(software_request) = 1.0;
+          id(boost_active) = true;
           id(sync_fan_logic)->execute();
   - id: boost_stop
     then:
       - fan.turn_on:
           id: zehnder_fan
-          speed: !lambda 'return id(pre_boost_fan_speed);'
+          speed: !lambda 'id(boost_active) = false;
+                          return id(pre_boost_fan_speed);'
 
   - id: boost_timer_script
     mode: restart
     parameters:
       delay_min: int
     then:
-      # 1. Save current state and start boost
-      - lambda: |-
-          id(boost_start)->execute(); // Start boost mode
+      - switch.turn_on: zehnder_boost
 
       # 3. Wait
       - delay: !lambda return delay_min*60000;
       
       # 4. Revert to old state
-      - lambda: |-
-          id(boost_stop)->execute(); // Stop boost mode
+      - switch.turn_off: zehnder_boost
 
 button:
   - platform: template
@@ -116,20 +119,18 @@ button:
         - script.execute: 
             id: boost_timer_script
             delay_min: 60
+
+switch:
   - platform: template
-    name: "Boost On"
-    id: zehnder_boost_on
+    name: "Boost"
+    id: zehnder_boost
     icon: mdi:play
-    on_press:
-      then:
-        - script.execute: boost_start
-  - platform: template
-    name: "Boost Off"
-    id: zehnder_boost_off
-    icon: mdi:stop
-    on_press:
-      then:
-        - script.execute: boost_stop
+    optimistic: true
+    on_turn_on:
+      - script.execute: boost_start
+    on_turn_off:
+      - script.execute: boost_stop
+
 fan:
   - platform: template
     name: "Fan"
@@ -146,7 +147,10 @@ fan:
             // If the script is the one changing the speed, do nothing!
             if (id(is_syncing)) return; 
 
-            id(boost_timer_script).stop(); // overwrite the boost mode
+            // id(boost_timer_script).stop(); // overwrite the boost mode
+            if (id(boost_active)) {
+              id(zehnder_boost).turn_off();
+            }
 
             // Otherwise, it was a user click in the app
             if (x == 1) id(software_request) = 0.0;
