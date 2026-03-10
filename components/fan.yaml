@@ -124,7 +124,7 @@ switch:
   - platform: template
     name: "Boost"
     id: zehnder_boost
-    icon: mdi:play
+    icon: mdi:fan-speed-3
     optimistic: true
     on_turn_on:
       - script.execute: boost_start
