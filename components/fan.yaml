@@ -56,29 +56,37 @@ script:
           else call.set_speed(3);
           call.perform();
           id(is_syncing) = false;
+  - id: boost_start
+    then:
+      - lambda: |-
+          // 1. Save current state
+          id(pre_boost_fan_speed) = id(zehnder_fan).speed;
+          ESP_LOGI("fan", "pre_boost_speed: %.2f", id(zehnder_fan).speed);
+      
+          // 2. Activate Boost
+          id(software_request) = 1.0;
+          id(sync_fan_logic)->execute();
+  - id: boost_stop
+    then:
+      - fan.turn_on:
+          id: zehnder_fan
+          speed: !lambda 'return id(pre_boost_fan_speed);'
 
   - id: boost_timer_script
     mode: restart
     parameters:
       delay_min: int
     then:
-      # 1. Save current state
+      # 1. Save current state and start boost
       - lambda: |-
-          id(pre_boost_fan_speed) = id(zehnder_fan).speed;
-          ESP_LOGI("fan", "pre_boost_speed: %.2f", id(zehnder_fan).speed);
-      
-      # 2. Activate Boost
-      - lambda: |-
-          id(software_request) = 1.0;
-          id(sync_fan_logic)->execute();
+          id(boost_start)->execute(); // Start boost mode
 
       # 3. Wait
       - delay: !lambda return delay_min*60000;
       
       # 4. Revert to old state
-      - fan.turn_on:
-          id: zehnder_fan
-          speed: !lambda 'return id(pre_boost_fan_speed);'
+      - lambda: |-
+          id(boost_stop)->execute(); // Stop boost mode
 
 button:
   - platform: template
@@ -108,7 +116,20 @@ button:
         - script.execute: 
             id: boost_timer_script
             delay_min: 60
-
+  - platform: template
+    name: "Boost On"
+    id: zehnder_boost_on
+    icon: mdi:play
+    on_press:
+      then:
+        - script.execute: boost_start
+  - platform: template
+    name: "Boost Off"
+    id: zehnder_boost_off
+    icon: mdi:stop
+    on_press:
+      then:
+        - script.execute: boost_stop
 fan:
   - platform: template
     name: "Fan"
