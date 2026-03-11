@@ -60,6 +60,7 @@ script:
           else call.set_speed(3);
           call.perform();
           id(is_syncing) = false;
+
   - id: boost_start
     then:
       - lambda: |-
@@ -71,6 +72,7 @@ script:
           id(software_request) = 1.0;
           id(boost_active) = true;
           id(sync_fan_logic)->execute();
+
   - id: boost_stop
     then:
       - fan.turn_on:
@@ -83,12 +85,13 @@ script:
     parameters:
       delay_min: int
     then:
+      # 1. Save current state and activate boost
       - switch.turn_on: zehnder_boost
 
-      # 3. Wait
+      # 2. Wait
       - delay: !lambda return delay_min*60000;
       
-      # 4. Revert to old state
+      # 3. Revert to old state
       - switch.turn_off: zehnder_boost
 
 button:
@@ -124,7 +127,7 @@ switch:
   - platform: template
     name: "Boost"
     id: zehnder_boost
-    icon: mdi:fan-speed-3
+    icon: mdi:play
     optimistic: true
     on_turn_on:
       - script.execute: boost_start
@@ -147,7 +150,6 @@ fan:
             // If the script is the one changing the speed, do nothing!
             if (id(is_syncing)) return; 
 
-            // id(boost_timer_script).stop(); // overwrite the boost mode
             if (id(boost_active)) {
               id(zehnder_boost).turn_off();
             }
