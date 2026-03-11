@@ -2,18 +2,18 @@ globals:
   - id: software_request
     type: float
     restore_value: yes      # Remembers your UI setting after a power cut
-    initial_value: '0.5'
+    initial_value: 0.5
   - id: hardware_request
     type: float
     restore_value: no
-    initial_value: '0.0'
+    initial_value: 0.0
   - id: is_syncing
     type: bool
     initial_value: 'false'  # Prevents the feedback loop during UI updates
   - id: pre_boost_fan_speed
     type: int
     restore_value: no
-    initial_value: '0' 
+    initial_value: 0
   - id: boost_active
     type: bool
     restore_value: no
@@ -23,11 +23,7 @@ binary_sensor:
   - platform: template
     id: fan_fault_sensor
     lambda: |-
-      if (id(zehnder_status).state == "Normal") {
-        return false;
-      } else {
-        return true;
-      }
+      return id(zehnder_status).state != "Normal";
 
 script:
   - id: sync_fan_logic
@@ -66,7 +62,6 @@ script:
       - lambda: |-
           // 1. Save current state
           id(pre_boost_fan_speed) = id(zehnder_fan).speed;
-          ESP_LOGI("fan", "pre_boost_speed: %.2f", id(zehnder_fan).speed);
       
           // 2. Activate Boost
           id(software_request) = 1.0;
