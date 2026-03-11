@@ -2,18 +2,18 @@ globals:
   - id: software_request
     type: float
     restore_value: yes      # Remembers your UI setting after a power cut
-    initial_value: 0.5
+    initial_value: '0.5'
   - id: hardware_request
     type: float
     restore_value: no
-    initial_value: 0.0
+    initial_value: '0.0'
   - id: is_syncing
     type: bool
     initial_value: 'false'  # Prevents the feedback loop during UI updates
   - id: pre_boost_fan_speed
     type: int
     restore_value: no
-    initial_value: 0
+    initial_value: '0.0'
   - id: boost_active
     type: bool
     restore_value: no
