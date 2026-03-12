@@ -58,7 +58,7 @@ esphome:
                 html += "<script>function poll(){fetch('/registers/status').then(r=>r.json()).then(d=>{";
                 html += "document.getElementById('st').innerText=d.s;";
                 html += "if(d.c){document.getElementById('dl').style.display='block';}else{setTimeout(poll,1000);}";
-                html += "});} window.onload=poll;</script></head><body>";
+                html += "}).catch(e=>{setTimeout(poll,2000);});} window.onload=poll;</script></head><body>";
                 html += "<nav><a href='/'>Dashboard</a><a href='/registers' class='active'>Register Dump</a></nav>";
                 html += "<div class='content'><h1>Zehnder ComfoAir Register Dump</h1>";
                 html += "<div class='status-box'><strong>Current Status:</strong> <span id='st'>" + id(zehnder_register_dump_output).state + "</span></div>";
@@ -104,7 +104,7 @@ esphome:
             html += "<script>function poll(){fetch('/registers/status').then(r=>r.json()).then(d=>{";
             html += "document.getElementById('st').innerText=d.s;";
             html += "if(d.c){document.getElementById('dl').style.display='block';}else{setTimeout(poll,1000);}";
-            html += "});} window.onload=poll;</script></head><body>";
+            html += "}).catch(e=>{setTimeout(poll,2000);});} window.onload=poll;</script></head><body>";
             html += "<nav><a href='/'>Dashboard</a><a href='/registers' class='active'>Register Dump</a></nav>";
             html += "<div class='content'><h1>Zehnder ComfoAir Register Dump</h1>";
             html += "<div class='status-box'><strong>Current Status:</strong> <span id='st'>" + id(zehnder_register_dump_output).state + "</span></div>";
