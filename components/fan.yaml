@@ -13,17 +13,17 @@ globals:
   - id: pre_boost_fan_speed
     type: int
     restore_value: no
-    initial_value: '0' 
+    initial_value: '0'
+  - id: boost_active
+    type: bool
+    restore_value: no
+    initial_value: 'false'
 
 binary_sensor:
   - platform: template
     id: fan_fault_sensor
     lambda: |-
-      if (id(zehnder_status).state == "Normal") {
-        return false;
-      } else {
-        return true;
-      }
+      return id(zehnder_status).state != "Normal";
 
 script:
   - id: sync_fan_logic
@@ -48,37 +48,51 @@ script:
           // 2. Normal Operation (No Fault)
           id(${fan_output}).set_level(soft);
 
+          // Helper to map ui_max to template fan speed 1..3
+          auto map_speed = [](float level)->int {
+            if (level <= 0.1) return 1;
+            if (level <= 0.6) return 2;
+            return 3;
+          };
+
           id(is_syncing) = true;
           auto call = id(zehnder_fan).make_call();
           call.set_state(true);
-          if (ui_max <= 0.1) call.set_speed(1);
-          else if (ui_max <= 0.6) call.set_speed(2);
-          else call.set_speed(3);
+          call.set_speed(map_speed(ui_max));
           call.perform();
           id(is_syncing) = false;
+
+  - id: boost_start
+    then:
+      - lambda: |-
+          // 1. Save current state
+          id(pre_boost_fan_speed) = id(zehnder_fan).speed;
+      
+          // 2. Activate Boost
+          id(software_request) = 1.0;
+          id(boost_active) = true;
+          id(sync_fan_logic)->execute();
+
+  - id: boost_stop
+    then:
+      - fan.turn_on:
+          id: zehnder_fan
+          speed: !lambda 'id(boost_active) = false;
+                          return id(pre_boost_fan_speed);'
 
   - id: boost_timer_script
     mode: restart
     parameters:
       delay_min: int
     then:
-      # 1. Save current state
-      - lambda: |-
-          id(pre_boost_fan_speed) = id(zehnder_fan).speed;
-          ESP_LOGI("fan", "pre_boost_speed: %.2f", id(zehnder_fan).speed);
-      
-      # 2. Activate Boost
-      - lambda: |-
-          id(software_request) = 1.0;
-          id(sync_fan_logic)->execute();
+      # 1. Save current state and activate boost
+      - switch.turn_on: zehnder_boost
 
-      # 3. Wait
+      # 2. Wait
       - delay: !lambda return delay_min*60000;
       
-      # 4. Revert to old state
-      - fan.turn_on:
-          id: zehnder_fan
-          speed: !lambda 'return id(pre_boost_fan_speed);'
+      # 3. Revert to old state
+      - switch.turn_off: zehnder_boost
 
 button:
   - platform: template
@@ -109,6 +123,17 @@ button:
             id: boost_timer_script
             delay_min: 60
 
+switch:
+  - platform: template
+    name: "Boost"
+    id: zehnder_boost
+    icon: mdi:fan-speed-3
+    optimistic: true
+    on_turn_on:
+      - script.execute: boost_start
+    on_turn_off:
+      - script.execute: boost_stop
+
 fan:
   - platform: template
     name: "Fan"
@@ -125,7 +150,9 @@ fan:
             // If the script is the one changing the speed, do nothing!
             if (id(is_syncing)) return; 
 
-            id(boost_timer_script).stop(); // overwrite the boost mode
+            if (id(boost_active)) {
+              id(zehnder_boost).turn_off();
+            }
 
             // Otherwise, it was a user click in the app
             if (x == 1) id(software_request) = 0.0;
