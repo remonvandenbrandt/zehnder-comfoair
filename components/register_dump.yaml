@@ -7,6 +7,7 @@ web_server_base:
 web_server:
   id: zehnder_web_server
   web_server_base_id: zehnder_web_server_base
+  js_include: "components/web_nav.js"
 
 globals:
   - id: register_dump_result
@@ -17,6 +18,10 @@ globals:
     type: int
     restore_value: no
     initial_value: '0'
+  - id: register_dump_complete
+    type: bool
+    restore_value: no
+    initial_value: 'false'
 
 text_sensor:
   - platform: template
@@ -38,37 +43,43 @@ esphome:
            public:
             bool canHandle(esphome::web_server_idf::AsyncWebServerRequest *request) const override {
               std::string url = request->url();
-              return url == "/registers" || url == "/registers/start" || url == "/registers/download.csv" || url == "/registers/status";
+              return url == "/registers" || url == "/registers/start" || url == "/registers/status" || url == "/registers/download.csv";
             }
             void handleRequest(esphome::web_server_idf::AsyncWebServerRequest *request) override {
               std::string url = request->url();
               if (url == "/registers") {
                 std::string html = "<html><head><title>Zehnder Register Dump</title>";
-                html += "<style>body{font-family:sans-serif;margin:2em;line-height:1.5;} .btn{background:#03a9f4;color:white;padding:10px 20px;text-decoration:none;border-radius:4px;border:none;cursor:pointer;font-size:16px;}</style>";
+                html += "<style>body{font-family:sans-serif;margin:0;line-height:1.5;background:#f4f7f9;color:#333;}";
+                html += "nav{background:#1a1a1a;padding:15px 30px;display:flex;gap:20px;box-shadow:0 2px 10px rgba(0,0,0,0.2);}";
+                html += "nav a{color:#aaa;text-decoration:none;font-weight:500;transition:0.2s;} nav a:hover{color:#fff;}";
+                html += "nav a.active{color:#fff;border-bottom:2px solid #03a9f4;padding-bottom:4px;}";
+                html += ".content{max-width:800px;margin:40px auto;padding:40px;background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);}";
+                html += "h1{margin-top:0;font-weight:300;color:#111;} .btn{background:#03a9f4;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-size:16px;transition:0.2s;} .btn:hover{background:#0288d1;}";
+                html += ".status-box{background:#f0f7ff;padding:20px;border-radius:10px;border-left:5px solid #03a9f4;margin:25px 0;}</style>";
                 html += "<script>function poll(){fetch('/registers/status').then(r=>r.json()).then(d=>{";
                 html += "document.getElementById('st').innerText=d.s;";
                 html += "if(d.c){document.getElementById('dl').style.display='block';}else{setTimeout(poll,1000);}";
                 html += "});} window.onload=poll;</script></head><body>";
-                html += "<h1>Zehnder ComfoAir Register Dump</h1>";
-                html += "<p><strong>Status:</strong> <span id='st'>" + id(zehnder_register_dump_output).state + "</span></p>";
-                
-                html += "<form action='/registers/start' method='POST' style='margin:1em 0;'>";
+                html += "<nav><a href='/'>Dashboard</a><a href='/registers' class='active'>Register Dump</a></nav>";
+                html += "<div class='content'><h1>Zehnder ComfoAir Register Dump</h1>";
+                html += "<div class='status-box'><strong>Current Status:</strong> <span id='st'>" + id(zehnder_register_dump_output).state + "</span></div>";
+                html += "<form action='/registers/start' method='POST'>";
                 html += "<input type='submit' class='btn' value='Start New Dump'>";
                 html += "</form>";
-                
-                html += "<div id='dl' style='display:" + std::string(id(register_dump_result).empty() ? "none" : "block") + ";margin-top:2em;padding:1em;background:#f5f5f5;border-left:5px solid #03a9f4;'>";
-                html += "<p>Dump complete! You can now download the results.</p>";
-                html += "<a href='/registers/download.csv' class='btn' style='background:#4caf50;'>Download registers.csv</a>";
-                html += "</div>";
-                
-                html += "</body></html>";
+                html += "<div id='dl' style='display:" + std::string(id(register_dump_complete) ? "block" : "none") + ";margin-top:30px;'>";
+                html += "<h3>Dump Ready</h3><p>You can now download the results as a CSV file.</p>";
+                html += "<a href='/registers/download.csv' class='btn' style='background:#4caf50;text-decoration:none;'>Download registers.csv</a>";
+                html += "</div></div></body></html>";
                 request->send(200, "text/html", html.c_str());
               } else if (url == "/registers/start") {
+                id(register_dump_complete) = false;
                 id(register_dump_script).execute();
                 request->redirect("/registers");
               } else if (url == "/registers/status") {
-                std::string json = "{\"s\":\"" + id(zehnder_register_dump_output).state + "\",\"c\":" + (id(register_dump_result).empty() ? "false" : "true") + "}";
-                request->send(200, "application/json", json.c_str());
+                std::string json = "{\"s\":\"" + id(zehnder_register_dump_output).state + "\",\"c\":" + (id(register_dump_complete) ? "true" : "false") + "}";
+                auto *response = request->beginResponse(200, "application/json", json);
+                response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+                request->send(response);
               } else if (url == "/registers/download.csv") {
                 auto *response = request->beginResponse(200, "text/csv", id(register_dump_result));
                 response->addHeader("Content-Disposition", "attachment; filename=\"registers.csv\"");
@@ -84,33 +95,39 @@ esphome:
           
           server->on("/registers", HTTP_GET, [](AsyncWebServerRequest *request) {
             std::string html = "<html><head><title>Zehnder Register Dump</title>";
-            html += "<style>body{font-family:sans-serif;margin:2em;line-height:1.5;} .btn{background:#03a9f4;color:white;padding:10px 20px;text-decoration:none;border-radius:4px;border:none;cursor:pointer;font-size:16px;}</style>";
+            html += "<style>body{font-family:sans-serif;margin:0;line-height:1.5;background:#f4f7f9;color:#333;}";
+            html += "nav{background:#1a1a1a;padding:15px 30px;display:flex;gap:20px;box-shadow:0 2px 10px rgba(0,0,0,0.2);}";
+            html += "nav a{color:#aaa;text-decoration:none;font-weight:500;transition:0.2s;} nav a:hover{color:#fff;}";
+            html += "nav a.active{color:#fff;border-bottom:2px solid #03a9f4;padding-bottom:4px;}";
+            html += ".content{max-width:800px;margin:40px auto;padding:40px;background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);}";
+            html += "h1{margin-top:0;font-weight:300;color:#111;} .btn{background:#03a9f4;color:#fff;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-size:16px;transition:0.2s;} .btn:hover{background:#0288d1;}";
+            html += ".status-box{background:#f0f7ff;padding:20px;border-radius:10px;border-left:5px solid #03a9f4;margin:25px 0;}</style>";
             html += "<script>function poll(){fetch('/registers/status').then(r=>r.json()).then(d=>{";
             html += "document.getElementById('st').innerText=d.s;";
             html += "if(d.c){document.getElementById('dl').style.display='block';}else{setTimeout(poll,1000);}";
             html += "});} window.onload=poll;</script></head><body>";
-            html += "<h1>Zehnder ComfoAir Register Dump</h1>";
-            html += "<p><strong>Status:</strong> <span id='st'>" + id(zehnder_register_dump_output).state + "</span></p>";
-            
-            html += "<form action='/registers/start' method='POST' style='margin:1em 0;'>";
+            html += "<nav><a href='/'>Dashboard</a><a href='/registers' class='active'>Register Dump</a></nav>";
+            html += "<div class='content'><h1>Zehnder ComfoAir Register Dump</h1>";
+            html += "<div class='status-box'><strong>Current Status:</strong> <span id='st'>" + id(zehnder_register_dump_output).state + "</span></div>";
+            html += "<form action='/registers/start' method='POST'>";
             html += "<input type='submit' class='btn' value='Start New Dump'>";
             html += "</form>";
-            
-            html += "<div id='dl' style='display:" + std::string(id(register_dump_result).empty() ? "none" : "block") + ";margin-top:2em;padding:1em;background:#f5f5f5;border-left:5px solid #03a9f4;'>";
-            html += "<p>Dump complete! You can now download the results.</p>";
-            html += "<a href='/registers/download.csv' class='btn' style='background:#4caf50;'>Download registers.csv</a>";
-            html += "</div>";
-            
-            html += "</body></html>";
+            html += "<div id='dl' style='display:" + std::string(id(register_dump_complete) ? "block" : "none") + ";margin-top:30px;'>";
+            html += "<h3>Dump Ready</h3><p>You can now download the results as a CSV file.</p>";
+            html += "<a href='/registers/download.csv' class='btn' style='background:#4caf50;text-decoration:none;'>Download registers.csv</a>";
+            html += "</div></div></body></html>";
             request->send(200, "text/html", html.c_str());
           });
 
           server->on("/registers/status", HTTP_GET, [](AsyncWebServerRequest *request) {
-            std::string json = "{\"s\":\"" + id(zehnder_register_dump_output).state + "\",\"c\":" + (id(register_dump_result).empty() ? "false" : "true") + "}";
-            request->send(200, "application/json", json.c_str());
+            std::string json = "{\"s\":\"" + id(zehnder_register_dump_output).state + "\",\"c\":" + (id(register_dump_complete) ? "true" : "false") + "}";
+            AsyncWebServerResponse *response = request->beginResponse(200, "application/json", json.c_str());
+            response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+            request->send(response);
           });
 
           server->on("/registers/start", HTTP_POST, [](AsyncWebServerRequest *request) {
+            id(register_dump_complete) = false;
             id(register_dump_script).execute();
             request->redirect("/registers");
           });
@@ -164,6 +181,7 @@ script:
               if (id(register_dump_batch) >= num_batches) {
                 ESP_LOGI("register_dump", "All 8 batches complete. %zu bytes total.", id(register_dump_result).size());
                 id(zehnder_register_dump_output).publish_state("Complete (375 registers)");
+                id(register_dump_complete) = true;
               } else {
                 id(zehnder_register_dump_output).publish_state("Reading... (" + std::to_string(id(register_dump_batch)) + "/8)");
               }
