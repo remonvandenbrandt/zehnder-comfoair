@@ -1,8 +1,12 @@
 # Register Dump via Web Server
 # Provides a CSV export of all holding registers 0-374
 
+web_server_base:
+  id: zehnder_web_server_base
+
 web_server:
   id: zehnder_web_server
+  web_server_base_id: zehnder_web_server_base
 
 globals:
   - id: register_dump_result
@@ -28,7 +32,7 @@ esphome:
     priority: -100
     then:
       - lambda: |-
-          auto *server = id(zehnder_web_server).get_server();
+          auto *server = id(zehnder_web_server_base).get_server();
           
           // Controller page
           server->on("/registers", HTTP_GET, [](AsyncWebServerRequest *request) {
