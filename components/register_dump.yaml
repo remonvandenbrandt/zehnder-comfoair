@@ -32,7 +32,7 @@ text_sensor:
     icon: mdi:database-export
 
 esphome:
-  comment: '<a href="/registers" style="color:#03a9f4;text-decoration:underline;">Open Register Dump</a>'
+  comment: "Register Dump: /registers"
   on_boot:
     priority: -100
     then:
