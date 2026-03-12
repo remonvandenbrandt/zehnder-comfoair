@@ -23,10 +23,9 @@ packages:
 
 1. Navigate directly to the register dump page:
    `http://<device-ip>/registers`
-2. Use the top navbar to switch between the **Dashboard** and **Register Dump**.
-3. Click **"Start New Dump"**. The page will show the progress and update automatically (no refresh required).
-4. Once the status shows **"Complete"**, a **"Download registers.csv"** button will appear.
-5. Click the button to download the full CSV file.
+2. Click **"Start New Dump"**. The page will show the progress and update automatically (no refresh required).
+3. Once the status shows **"Complete"**, a **"Download registers.csv"** button will appear.
+4. Click the button to download the full CSV file.
 
 ## Technical details
 
