@@ -7,7 +7,6 @@ web_server_base:
 web_server:
   id: zehnder_web_server
   web_server_base_id: zehnder_web_server_base
-  js_include: "web_nav.js"
 
 globals:
   - id: register_dump_result
@@ -33,6 +32,7 @@ text_sensor:
     icon: mdi:database-export
 
 esphome:
+  comment: "Register Dump: /registers"
   on_boot:
     priority: -100
     then:
