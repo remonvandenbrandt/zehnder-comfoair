@@ -69,14 +69,14 @@ esphome:
                 html += "<h3>Dump Ready</h3><p>You can now download the results as a CSV file.</p>";
                 html += "<a href='/registers/download.csv' class='btn' style='background:#4caf50;text-decoration:none;'>Download registers.csv</a>";
                 html += "</div></div></body></html>";
-                request->send(200, "text/html", html);
+                request->send(200, "text/html", html.c_str());
               } else if (url == "/registers/start") {
                 id(register_dump_complete) = false;
                 id(register_dump_script).execute();
                 request->redirect("/registers");
               } else if (url == "/registers/status") {
                 std::string json = "{\"s\":\"" + id(zehnder_register_dump_output).state + "\",\"c\":" + (id(register_dump_complete) ? "true" : "false") + "}";
-                auto *response = request->beginResponse(200, "application/json", json);
+                auto *response = request->beginResponse(200, "application/json", json.c_str());
                 response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
                 request->send(response);
               } else if (url == "/registers/download.csv") {
