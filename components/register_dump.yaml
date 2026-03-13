@@ -92,7 +92,7 @@ esphome:
           // Arduino Logic
           class ArduinoDumpHandler : public AsyncWebHandler {
            public:
-            bool canHandle(AsyncWebServerRequest *request) override {
+            bool canHandle(AsyncWebServerRequest *request) const override {
               if (request->method() != HTTP_GET && request->method() != HTTP_POST) return false;
               String url = request->url();
               return url == "/registers" || url == "/registers/start" || url == "/registers/status" || url == "/registers/download.csv";
