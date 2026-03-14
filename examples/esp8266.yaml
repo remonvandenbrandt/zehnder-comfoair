@@ -4,6 +4,9 @@ substitutions:
   update_interval: 15s
   fan_output: fan_output
 
+# modbus: # uncomment for MAX485 chip without automatic flow control
+#   flow_control_pin: GPIO5
+
 esphome:
   name: zehnder-comfoair
   friendly_name: Zehnder Comfoair

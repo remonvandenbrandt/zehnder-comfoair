@@ -76,7 +76,9 @@ The following schematic shows how to connect the hardware.
 ```
 
 ### Example of minimal configuration yaml
+Example yaml files for different configurations are available [here](examples).
 
+The minimum configuration is shown below: 
 ```yaml
 substitutions:
   tx_pin: GPIO01
@@ -85,7 +87,7 @@ substitutions:
   fan_output: fan_output
 
 # modbus: # uncomment for MAX485 chip without automatic flow control
-#   flow_control_pin: GPIO05
+#   flow_control_pin: GPIO16
 
 packages:
   remote_package:
@@ -102,7 +104,7 @@ output:
   id: fan_output
 
 logger:
-  baud_rate: 0 # disable logger for hardware UART support
+  baud_rate: 0 # disable logger for hardware UART support (only on ESP8266)
 ```
 
 On ESP32 the output can be configured as follows:
