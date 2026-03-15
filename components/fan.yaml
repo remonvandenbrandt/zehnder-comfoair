@@ -1,3 +1,6 @@
+substitutions:
+  fan_speed_count: "3"
+
 globals:
   - id: software_request
     type: float
@@ -48,14 +51,14 @@ script:
           // 2. Normal Operation (No Fault)
           id(${fan_output}).set_level(soft);
 
-          // Helper to map ui_max in [0,1] to template fan speed 1..${speed_count}
+          // Helper to map ui_max in [0,1] to template fan speed 1..${fan_speed_count}
           auto map_speed = [&](float level)->int {
-            int sc = ${speed_count};
+            int sc = ${fan_speed_count};
             if (sc <= 1) return 1;
             // If level is essentially zero treat as first step
             if (level <= 0.0) return 1;
             // Map level [0,1] to indices [1, sc], rounding to nearest index
-            int idx = 1 + (int)floor(level * (sc - 1) + 0.5);
+            int idx = 1 + (int)floor(level * (sc - 1));
             if (idx < 1) idx = 1;
             if (idx > sc) idx = sc;
             return idx;
@@ -144,7 +147,7 @@ fan:
   - platform: template
     name: "Fan"
     id: zehnder_fan
-    speed_count: ${speed_count}
+    speed_count: ${fan_speed_count}
     on_turn_on:
       - lambda: |-
           if (id(fan_fault_sensor).state) {
@@ -160,9 +163,9 @@ fan:
               id(zehnder_boost).turn_off();
             }
 
-            // Map user speed x in [1, ${speed_count}] to software_request in [0,1]
+            // Map user speed x in [1, ${fan_speed_count}] to software_request in [0,1]
             {
-              int sc = ${speed_count};
+              int sc = ${fan_speed_count};
               if (sc <= 1) {
                 id(software_request) = 1.0;
               } else {
