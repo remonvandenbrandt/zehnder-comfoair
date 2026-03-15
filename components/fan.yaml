@@ -1,3 +1,6 @@
+substitutions:
+  fan_speed_count: "3"
+
 globals:
   - id: software_request
     type: float
@@ -48,11 +51,16 @@ script:
           // 2. Normal Operation (No Fault)
           id(${fan_output}).set_level(soft);
 
-          // Helper to map ui_max to template fan speed 1..3
+          // Helper to map ui_max to template fan speed 1..n
           auto map_speed = [](float level)->int {
-            if (level <= 0.1) return 1;
-            if (level <= 0.6) return 2;
-            return 3;
+            if (${fan_speed_count} == 3) {
+              if (level <= 0.1) return 1;
+              if (level <= 0.6) return 2;
+              return 3;
+            } else {
+              int speed = round(level * ${fan_speed_count});
+              return max(1, speed);
+            }
           };
 
           id(is_syncing) = true;
@@ -138,7 +146,7 @@ fan:
   - platform: template
     name: "Fan"
     id: zehnder_fan
-    speed_count: 3
+    speed_count: ${fan_speed_count}
     on_turn_on:
       - lambda: |-
           if (id(fan_fault_sensor).state) {
@@ -155,9 +163,13 @@ fan:
             }
 
             // Otherwise, it was a user click in the app
-            if (x == 1) id(software_request) = 0.0;
-            else if (x == 2) id(software_request) = 0.5;
-            else if (x == 3) id(software_request) = 1.0;
+            if (${fan_speed_count} == 3) {
+              if (x == 1) id(software_request) = 0.0;
+              else if (x == 2) id(software_request) = 0.5;
+              else if (x == 3) id(software_request) = 1.0;
+            } else {
+              id(software_request) = x / (float)${fan_speed_count};
+            }
             
             id(sync_fan_logic)->execute();
 

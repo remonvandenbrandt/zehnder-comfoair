@@ -86,6 +86,7 @@ substitutions:
   rx_pin: GPIO03
   update_interval: 15s
   fan_output: fan_output
+  # fan_speed_count: "100"  # uncomment this to get a continuous 0-100% slider instead of the default 3 presets
 
 # If your MAX485 module does not have automatic flow control, uncomment and set a flow control pin:
 # modbus:
