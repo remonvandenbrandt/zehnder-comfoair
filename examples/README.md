@@ -2,7 +2,8 @@
 
 This folder contains minimal example ESPHome configurations for different ESP boards and output options. Use these as a starting point and verify the board and GPIO pins for your hardware.
 
-> Warning: Always check that the board and GPIO pins match your device.
+> [!WARNING] 
+> Always check that the board and GPIO pins match your configuration!
 
 Included examples:
 - [esp8266](examples/esp8266.yaml) — ESP8266 (NodeMCU v2) with software PWM output.
